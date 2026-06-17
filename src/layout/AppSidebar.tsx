@@ -9,9 +9,8 @@ import {
   GridIcon,
   HorizontaLDots,
   ListIcon,
-  PageIcon,
+  LockIcon,
   PieChartIcon,
-  PlugInIcon,
   TableIcon,
   UserCircleIcon,
 } from "../icons";
@@ -28,8 +27,13 @@ type NavItem = {
 const navItems: NavItem[] = [
   {
     icon: <GridIcon />,
-    name: "Dashboard",
-    subItems: [{ name: "Ecommerce", path: "/", pro: false }],
+    name: "Inicio",
+    path: "/",
+  },
+  {
+    icon: <LockIcon />,
+    name: "Acceso Porton Electrico",
+    path: "/access-cardoor",
   },
   {
     icon: <CalenderIcon />,
@@ -40,7 +44,7 @@ const navItems: NavItem[] = [
     icon: <UserCircleIcon />,
     name: "User Profile",
     path: "/profile",
-  },
+  },  
   {
     name: "Forms",
     icon: <ListIcon />,
@@ -51,6 +55,7 @@ const navItems: NavItem[] = [
     icon: <TableIcon />,
     subItems: [{ name: "Basic Tables", path: "/basic-tables", pro: false }],
   },
+  /**
   {
     name: "Pages",
     icon: <PageIcon />,
@@ -58,16 +63,23 @@ const navItems: NavItem[] = [
       { name: "Blank Page", path: "/blank", pro: false },
       { name: "404 Error", path: "/error-404", pro: false },
     ],
-  },
+  }, 
+    */
 ];
 
 const othersItems: NavItem[] = [
+  /** */
+   {
+    icon: <BoxCubeIcon />,
+    name: "Adminsitración de Perfiles",
+    path: "/admin-profiles",
+  },
   {
     icon: <PieChartIcon />,
-    name: "Charts",
+    name: "Reportes",
     subItems: [
-      { name: "Line Chart", path: "/line-chart", pro: false },
-      { name: "Bar Chart", path: "/bar-chart", pro: false },
+      { name: "Reporte Usuarios", path: "/line-chart", pro: false },
+      { name: "Reporte Accesos", path: "/bar-chart", pro: false },
     ],
   },
   {
@@ -82,6 +94,7 @@ const othersItems: NavItem[] = [
       { name: "Videos", path: "/videos", pro: false },
     ],
   },
+  /**
   {
     icon: <PlugInIcon />,
     name: "Authentication",
@@ -90,6 +103,7 @@ const othersItems: NavItem[] = [
       { name: "Sign Up", path: "/signup", pro: false },
     ],
   },
+  */
 ];
 
 const AppSidebar: React.FC = () => {
@@ -303,27 +317,31 @@ const AppSidebar: React.FC = () => {
           !isExpanded && !isHovered ? "lg:justify-center" : "justify-start"
         }`}
       >
-        <Link to="/">
+        <Link to="/" className="flex items-center gap-2">
           {isExpanded || isHovered || isMobileOpen ? (
             <>
               <img
                 className="dark:hidden"
-                src="/images/logo/logo.svg"
+                src="/images/logo/logo-ciss.svg"
                 alt="Logo"
-                width={150}
+                width={80}
                 height={40}
               />
               <img
                 className="hidden dark:block"
-                src="/images/logo/logo-dark.svg"
+                src="/images/logo/logo-ciss.svg"
                 alt="Logo"
-                width={150}
+                width={80}
                 height={40}
+
               />
+              <p className="ml-2 text-lg font-bold text-gray-900 dark:text-white">
+                Fuentes de Rucalhue 2
+              </p>
             </>
           ) : (
             <img
-              src="/images/logo/logo-icon.svg"
+              src="/images/logo/logo-ciss.svg"
               alt="Logo"
               width={32}
               height={32}
@@ -359,7 +377,7 @@ const AppSidebar: React.FC = () => {
                 }`}
               >
                 {isExpanded || isHovered || isMobileOpen ? (
-                  "Others"
+                  "Administración"
                 ) : (
                   <HorizontaLDots />
                 )}

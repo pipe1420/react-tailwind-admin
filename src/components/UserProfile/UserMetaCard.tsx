@@ -1,15 +1,34 @@
+import { useState } from "react";
+import type { ChangeEvent } from "react";
 import { useModal } from "../../hooks/useModal";
 import { Modal } from "../ui/modal";
 import Button from "../ui/button/Button";
-import Input from "../form/input/InputField";
-import Label from "../form/Label";
 
 export default function UserMetaCard() {
   const { isOpen, openModal, closeModal } = useModal();
+  const [previewImage, setPreviewImage] = useState<string>(
+    "/images/user/owner.jpg"
+  );
+
   const handleSave = () => {
     // Handle save logic here
     console.log("Saving changes...");
     closeModal();
+  };
+
+  const handleProfilePhotoChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+
+    if (!file || !file.type.startsWith("image/")) {
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      setPreviewImage(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+    event.target.value = "";
   };
   return (
     <>
@@ -17,7 +36,7 @@ export default function UserMetaCard() {
         <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
           <div className="flex flex-col items-center w-full gap-6 xl:flex-row">
             <div className="w-20 h-20 overflow-hidden border border-gray-200 rounded-full dark:border-gray-800">
-              <img src="/images/user/owner.jpg" alt="user" />
+              <img src={previewImage} alt="user" className="h-full w-full object-cover" />
             </div>
             <div className="order-3 xl:order-2">
               <h4 className="mb-2 text-lg font-semibold text-center text-gray-800 dark:text-white/90 xl:text-left">
@@ -25,14 +44,15 @@ export default function UserMetaCard() {
               </h4>
               <div className="flex flex-col items-center gap-1 text-center xl:flex-row xl:gap-3 xl:text-left">
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Team Manager
+                  Propietario Departamento A123
                 </p>
                 <div className="hidden h-3.5 w-px bg-gray-300 dark:bg-gray-700 xl:block"></div>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Arizona, United States
+                  Condominio Fuentes de Rucalhue 2
                 </p>
               </div>
             </div>
+            {/* Social Links 
             <div className="flex items-center order-2 gap-2 grow xl:order-3 xl:justify-end">
               <a
                 href="https://www.facebook.com/PimjoHQ"
@@ -118,6 +138,7 @@ export default function UserMetaCard() {
                 </svg>
               </a>
             </div>
+            */}
           </div>
           <button
             onClick={openModal}
@@ -138,94 +159,88 @@ export default function UserMetaCard() {
                 fill=""
               />
             </svg>
-            Edit
+            Editar Foto
           </button>
         </div>
       </div>
+
       <Modal isOpen={isOpen} onClose={closeModal} className="max-w-[700px] m-4">
         <div className="no-scrollbar relative w-full max-w-[700px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11">
           <div className="px-2 pr-14">
             <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
-              Edit Personal Information
+              Editar Información Personal
             </h4>
             <p className="mb-6 text-sm text-gray-500 dark:text-gray-400 lg:mb-7">
-              Update your details to keep your profile up-to-date.
+              Actualiza tus datos para mantener tu perfil actualizado.
             </p>
           </div>
           <form className="flex flex-col">
-            <div className="custom-scrollbar h-[450px] overflow-y-auto px-2 pb-3">
-              <div>
-                <h5 className="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">
-                  Social Links
-                </h5>
-
-                <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
-                  <div>
-                    <Label>Facebook</Label>
-                    <Input
-                      type="text"
-                      value="https://www.facebook.com/PimjoHQ"
-                    />
-                  </div>
-
-                  <div>
-                    <Label>X.com</Label>
-                    <Input type="text" value="https://x.com/PimjoHQ" />
-                  </div>
-
-                  <div>
-                    <Label>Linkedin</Label>
-                    <Input
-                      type="text"
-                      value="https://www.linkedin.com/company/pimjo"
-                    />
-                  </div>
-
-                  <div>
-                    <Label>Instagram</Label>
-                    <Input type="text" value="https://instagram.com/PimjoHQ" />
-                  </div>
-                </div>
-              </div>
+            <div className="custom-scrollbar h-[|200px] overflow-y-auto px-2 pb-3">
               <div className="mt-7">
+                <div className="mb-6 flex flex-col gap-3 rounded-2xl border border-dashed border-gray-300 p-4 dark:border-gray-700 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={previewImage}
+                      alt="Foto de perfil"
+                      className="h-16 w-16 rounded-full object-cover"
+                    />
+                    <div>
+                      <p className="text-sm font-medium text-gray-800 dark:text-white/90">
+                        Foto de perfil
+                      </p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        Solo se permite una imagen
+                      </p>
+                    </div>
+                  </div>
+                  <label className="inline-flex cursor-pointer items-center justify-center rounded-full border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-white/[0.03]">
+                    <span>Seleccionar imagen</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple={false}
+                      onChange={handleProfilePhotoChange}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
+
+                {/* Personal Information 
                 <h5 className="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">
-                  Personal Information
+                  Información Personal
                 </h5>
 
                 <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
                   <div className="col-span-2 lg:col-span-1">
-                    <Label>First Name</Label>
-                    <Input type="text" value="Musharof" />
+                    <Label>Nombre</Label>
+                    <Input type="text" value="Juan" />
                   </div>
 
                   <div className="col-span-2 lg:col-span-1">
-                    <Label>Last Name</Label>
-                    <Input type="text" value="Chowdhury" />
+                    <Label>Apellido</Label>
+                    <Input type="text" value="Perez" />
                   </div>
 
                   <div className="col-span-2 lg:col-span-1">
-                    <Label>Email Address</Label>
-                    <Input type="text" value="randomuser@pimjo.com" />
+                    <Label>Dirección de Email</Label>
+                    <Input type="text" value="juanperez@gmail.com" />
                   </div>
 
                   <div className="col-span-2 lg:col-span-1">
-                    <Label>Phone</Label>
-                    <Input type="text" value="+09 363 398 46" />
-                  </div>
-
-                  <div className="col-span-2">
-                    <Label>Bio</Label>
-                    <Input type="text" value="Team Manager" />
+                    <Label>Teléfono</Label>
+                    <Input type="text" value="+569 1234 5678" />
                   </div>
                 </div>
+                */ }
+                
               </div>
             </div>
-            <div className="flex items-center gap-3 px-2 mt-6 lg:justify-end">
+            <div className="mt-6 flex items-center gap-3 px-2 lg:justify-end">
               <Button size="sm" variant="outline" onClick={closeModal}>
-                Close
+                Cerrar
               </Button>
               <Button size="sm" onClick={handleSave}>
-                Save Changes
+                Guardar Cambios
               </Button>
             </div>
           </form>

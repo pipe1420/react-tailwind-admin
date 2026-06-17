@@ -6,8 +6,8 @@ export default function SignIn() {
   return (
     <>
       <PageMeta
-        title="React.js SignIn Dashboard | TailAdmin - Next.js Admin Dashboard Template"
-        description="This is React.js SignIn Tables Dashboard page for TailAdmin - React.js Tailwind CSS Admin Dashboard Template"
+        title="Iniciar Sesión | Fuentes de Rucalhue 2"
+        description="Esta página permite a los usuarios iniciar sesión en el sistema, proporcionando sus datos de acceso. Facilita el proceso de inicio de sesión para que los usuarios puedan acceder a las funcionalidades y servicios disponibles en la plataforma de Fuentes de Rucalhue 2."
       />
       <AuthLayout>
         <SignInForm />

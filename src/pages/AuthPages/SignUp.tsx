@@ -6,8 +6,8 @@ export default function SignUp() {
   return (
     <>
       <PageMeta
-        title="React.js SignUp Dashboard | TailAdmin - Next.js Admin Dashboard Template"
-        description="This is React.js SignUp Tables Dashboard page for TailAdmin - React.js Tailwind CSS Admin Dashboard Template"
+        title="Registrate | Fuentes de Rucalhue 2"
+        description="Esta página permite a los usuarios registrarse en el sistema, proporcionando sus datos personales y de contacto para crear una cuenta. Facilita el proceso de registro para que los residentes puedan acceder a las funcionalidades y servicios disponibles en la plataforma de Fuentes de Rucalhue 2."
       />
       <AuthLayout>
         <SignUpForm />
