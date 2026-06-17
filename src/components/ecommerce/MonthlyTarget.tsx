@@ -69,10 +69,10 @@ export default function MonthlyTarget() {
         <div className="flex justify-between">
           <div>
             <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
-              Monthly Target
+              Accesos Últimos 30 Días
             </h3>
             <p className="mt-1 text-gray-500 text-theme-sm dark:text-gray-400">
-              Target you’ve set for each month
+              Este gráfico muestra el porcentaje de accesos registrados en los últimos 30 días en comparación con el objetivo mensual establecido. Un valor del 75.55% indica que se ha alcanzado el 75.55% del objetivo de accesos para el mes, lo que sugiere un buen desempeño en la gestión de accesos durante este período.
             </p>
           </div>
           <div className="relative inline-block">
@@ -88,13 +88,13 @@ export default function MonthlyTarget() {
                 onItemClick={closeDropdown}
                 className="flex w-full font-normal text-left text-gray-500 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
               >
-                View More
+                Ver Detalles
               </DropdownItem>
               <DropdownItem
                 onItemClick={closeDropdown}
                 className="flex w-full font-normal text-left text-gray-500 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
               >
-                Delete
+                Eliminar
               </DropdownItem>
             </Dropdown>
           </div>
@@ -114,8 +114,7 @@ export default function MonthlyTarget() {
           </span>
         </div>
         <p className="mx-auto mt-10 w-full max-w-[380px] text-center text-sm text-gray-500 sm:text-base">
-          You earn $3287 today, it's higher than last month. Keep up your good
-          work!
+          El gráfico de progreso mensual indica que se ha alcanzado el 75.55% del objetivo establecido para los accesos en los últimos 30 días, lo que sugiere un buen desempeño en la gestión de accesos durante este período.
         </p>
       </div>
 

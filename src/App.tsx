@@ -20,6 +20,8 @@ import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
 import AccessCarDoor from "./pages/Access/AccessCarDoor"
 import AdminProfiles from "./pages/Profiles/AdminProfiles";
+import AccessLog from "./pages/Access/AccessLog";
+import HomeAdmin from "./pages/Dashboard/HomeAdmin";
 
 export default function App() {
   return (
@@ -30,13 +32,14 @@ export default function App() {
           {/* Dashboard Layout */}
           <Route element={<AppLayout />}>
             <Route index path="/" element={<Home />} />
+            <Route path="/home-admin" element={<HomeAdmin />} />
 
             {/* Accesos */}
             <Route path="/access-cardoor" element={<AccessCarDoor />} />
 
             {/* Administración de Perfiles   */}
             <Route path="/admin-profiles" element={<AdminProfiles />} />
-
+            <Route path="/access-log" element={<AccessLog />} />
 
             {/* Others Page */}
             <Route path="/profile" element={<UserProfiles />} />

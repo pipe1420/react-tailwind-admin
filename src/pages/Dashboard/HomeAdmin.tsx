@@ -4,7 +4,7 @@ import StatisticsChart from "../../components/ecommerce/StatisticsChart";
 import RecentOrders from "../../components/ecommerce/RecentOrders";
 import PageMeta from "../../components/common/PageMeta";
 
-export default function Home() {
+export default function HomeAdmin() {
   return (
     <>
       <PageMeta
