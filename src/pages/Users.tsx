@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { userService } from '../services/userService';
 import { User } from '../types/user';
 import PageMeta from '../components/common/PageMeta';
@@ -17,8 +17,8 @@ export default function Users() {
         setLoading(true);
         const data = await userService.getAllUsers();
         setUsers(data);
-      } catch (err: any) {
-        setError(err.message || 'No se pudieron cargar los usuarios');
+      } catch {
+        setError('No se pudieron cargar los usuarios');
       } finally {
         setLoading(false);
       }

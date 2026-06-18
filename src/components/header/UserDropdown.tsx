@@ -1,10 +1,63 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { Dropdown } from "../ui/dropdown/Dropdown";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router"; // Asegúrate de importar useNavigate si deseas redirigir al salir
+import { User } from "../../types/user"; // Importa tu tipo de usuario si lo tienes definido
+
+// Definimos la estructura que esperamos del usuario de FastAPI
+interface UserProfile {
+  name: string;
+  email: string;
+  avatar?: string;
+}
 
 export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
+  const [user, setUser] = useState<UserProfile | null>(null);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+  // useEffect para consumir el endpoint /me al montar el componente
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        
+        // Si no hay token guardado, cancelamos la carga y redirigimos (o manejamos el estado)
+        if (!token) {
+          setLoading(false);
+          return;
+        }
+
+        const response = await fetch("http://127.0.0.1:8000/me", {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          // Mapeamos los datos de tu API (ej: full_name o username) al estado local
+          setUser({
+            name: data.first_name && data.last_name ? `${data.first_name} ${data.last_name}` : "Usuario",
+            email: data.email || "",
+            avatar: data.avatar_url || "/images/user/default-avatar.jpg",
+          });
+        } else {
+          // Si el token expiró o es inválido, limpiamos el almacenamiento
+          localStorage.removeItem("token");
+        }
+      } catch (error) {
+        console.error("Error al obtener el perfil del usuario:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   function toggleDropdown() {
     setIsOpen(!isOpen);
@@ -13,6 +66,29 @@ export default function UserDropdown() {
   function closeDropdown() {
     setIsOpen(false);
   }
+  
+  // Función para limpiar la sesión de la app
+  function handleLogout() {
+    localStorage.removeItem("token");
+    setUser(null);
+    closeDropdown();
+    navigate("/signin"); // Redirige a la página de login
+  }
+
+   // 1. Estado de Carga: Muestra un círculo gris animado mientras consulta la API
+  if (loading) {
+    return <div className="w-11 h-11 rounded-full bg-gray-200 dark:bg-gray-800 animate-pulse" />;
+  }
+
+  // 2. Estado Sin Sesión: Si no se encontraron datos, muestra botón de acceso
+  if (!user) {
+    return (
+      <Link to="/signin" className="text-sm font-medium text-gray-700 dark:text-gray-400 hover:underline">
+        Iniciar Sesión
+      </Link>
+    );
+  }
+
   return (
     <div className="relative">
       <button
@@ -23,7 +99,7 @@ export default function UserDropdown() {
           <img src="/images/user/owner.jpg" alt="User" />
         </span>
 
-        <span className="block mr-1 font-medium text-theme-sm">Juan Perez</span>
+        <span className="block mr-1 font-medium text-theme-sm">{user.name}</span>
         <svg
           className={`stroke-gray-500 dark:stroke-gray-400 transition-transform duration-200 ${
             isOpen ? "rotate-180" : ""
@@ -51,10 +127,10 @@ export default function UserDropdown() {
       >
         <div>
           <span className="block font-medium text-gray-700 text-theme-sm dark:text-gray-400">
-            Juan Perez
+            {user.name}
           </span>
           <span className="mt-0.5 block text-theme-xs text-gray-500 dark:text-gray-400">
-            juanperez@gmail.com
+            {user.email}
           </span>
         </div>
 
