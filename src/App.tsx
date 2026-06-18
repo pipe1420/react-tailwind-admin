@@ -3,25 +3,30 @@ import SignIn from "./pages/AuthPages/SignIn";
 import SignUp from "./pages/AuthPages/SignUp";
 import NotFound from "./pages/OtherPage/NotFound";
 import UserProfiles from "./pages/Profiles/UserProfiles";
-import Videos from "./pages/UiElements/Videos";
-import Images from "./pages/UiElements/Images";
-import Alerts from "./pages/UiElements/Alerts";
-import Badges from "./pages/UiElements/Badges";
-import Avatars from "./pages/UiElements/Avatars";
-import Buttons from "./pages/UiElements/Buttons";
-import LineChart from "./pages/Charts/LineChart";
-import BarChart from "./pages/Charts/BarChart";
+import Videos from "./pages/_Otros/UiElements/Videos";
+import Images from "./pages/_Otros/UiElements/Images";
+import Alerts from "./pages/_Otros/UiElements/Alerts";
+import Badges from "./pages/_Otros/UiElements/Badges";
+import Avatars from "./pages/_Otros/UiElements/Avatars";
+import Buttons from "./pages/_Otros/UiElements/Buttons";
+import LineChart from "./pages/_Otros/Charts/LineChart";
+import BarChart from "./pages/_Otros/Charts/BarChart";
 import Calendar from "./pages/Calendar";
-import BasicTables from "./pages/Tables/BasicTables";
-import FormElements from "./pages/Forms/FormElements";
+import BasicTables from "./pages/_Otros/Tables/BasicTables";
+import FormElements from "./pages/_Otros/Forms/FormElements";
 import Blank from "./pages/Blank";
 import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
-import Home from "./pages/Dashboard/Home";
-import AccessCarDoor from "./pages/Access/AccessCarDoor"
+
+import AccessControl from "./pages/Access/AccessControl"
 import AdminProfiles from "./pages/Profiles/AdminProfiles";
-import AccessLog from "./pages/Access/AccessLog";
-import HomeAdmin from "./pages/Dashboard/HomeAdmin";
+
+import AccessHistory from "./pages/Access/AccessHistory";
+import Vehicles from "./pages/Vehicles/Vehicles";
+
+import Dashboard from "./pages/Dashboard/Dashboard";
+import Users from "./pages/Users";
+
 
 export default function App() {
   return (
@@ -31,15 +36,18 @@ export default function App() {
         <Routes>
           {/* Dashboard Layout */}
           <Route element={<AppLayout />}>
-            <Route index path="/" element={<Home />} />
-            <Route path="/home-admin" element={<HomeAdmin />} />
-
+            <Route index path="/" element={<Dashboard />} />
             {/* Accesos */}
-            <Route path="/access-cardoor" element={<AccessCarDoor />} />
+            <Route path="/access-control" element={<AccessControl />} />
+            <Route path="/vehicles" element={<Vehicles />} />
 
             {/* Administración de Perfiles   */}
             <Route path="/admin-profiles" element={<AdminProfiles />} />
-            <Route path="/access-log" element={<AccessLog />} />
+            <Route path="/access-history" element={<AccessHistory />} />
+            <Route path="/users" element={<Users />} />
+
+
+
 
             {/* Others Page */}
             <Route path="/profile" element={<UserProfiles />} />

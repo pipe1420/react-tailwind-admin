@@ -12,6 +12,7 @@ import {
   PieChartIcon,
   CalenderIcon,
   PageIcon,
+  DocsIcon,
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
 import SidebarWidget from "./SidebarWidget";
@@ -41,7 +42,7 @@ const ResidentItems: NavItem[] = [
     roles: ["resident", "guard", "admin"],
   },
 
-  {
+  { 
     name: "Control de Acceso",
     icon: <PageIcon />,
     path: "/access-control",
@@ -66,17 +67,31 @@ const ResidentItems: NavItem[] = [
   },
 
   {
-    name: "Vehículos",
+    name: "Mis Vehículos",
     icon: <CalenderIcon />,
-    path: "/vehicles",
+    path: "/vehicles-resident",
     pro: false,
-    roles: ["resident", "admin"],
+    roles: ["resident"],
   },
 
   {
+    name: "Control Vehicular",
+    icon: <CalenderIcon />,
+    path: "/vehicles-resident",
+    pro: false,
+    roles: ["guard"],
+  },
+{
+    name: "Vehículos",
+    icon: <CalenderIcon />,
+    path: "/vehicles-resident",
+    pro: false,
+    roles: ["admin"],
+  },
+  {
     name: "Historial",
     icon: <ListIcon />,
-    path: "/history",
+    path: "/history-log",
     pro: false,
     roles: ["resident", "guard", "admin"],
   },
@@ -114,13 +129,13 @@ const AdminItems: NavItem[] = [
     roles: ["admin"],
   },
   {
-    icon: <PlugInIcon />,
+    icon: <DocsIcon />,
     name: "Logs",
     path: "/config",
     roles: ["admin"],
   },
   {
-    icon: <PlugInIcon />,
+    icon: <ListIcon />,
     name: "Diagnostico",
     path: "/config",
     roles: ["admin"],
