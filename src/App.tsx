@@ -26,7 +26,13 @@ import Vehicles from "./pages/Vehicles/Vehicles";
 
 import Dashboard from "./pages/Dashboard/Dashboard";
 import Users from "./pages/Users";
-
+import AccessVisits from "./pages/Access/AccessVisits";
+import Residents from "./pages/Users/Residents";
+import Reports from "./pages/Reports/Reports";
+import Config from "./pages/Config/Config";
+import Conecctions from "./pages/developer/Conecctions";
+import Logs from "./pages/developer/Logs";
+import Diagnostic from "./pages/developer/Diagnostic";
 
 export default function App() {
   return (
@@ -39,15 +45,21 @@ export default function App() {
             <Route index path="/" element={<Dashboard />} />
             {/* Accesos */}
             <Route path="/access-control" element={<AccessControl />} />
-            <Route path="/vehicles" element={<Vehicles />} />
+            <Route path="/vehicles" element={<Vehicles/>} />
 
             {/* Administración de Perfiles   */}
             <Route path="/admin-profiles" element={<AdminProfiles />} />
-            <Route path="/access-history" element={<AccessHistory />} />
+            <Route path="/history" element={<AccessHistory />} />
             <Route path="/users" element={<Users />} />
+            <Route path="/access-visits" element={<AccessVisits />} />
+            <Route path="/residents" element={<Residents />} />
+            <Route path="/reports" element={<Reports />} />
+            <Route path="/config" element={<Config />} />
 
-
-
+            {/* Developer   */}
+            <Route path="/conections" element={<Conecctions />} />
+            <Route path="/diagnostic" element={<Diagnostic />} />
+            <Route path="/logs" element={<Logs />} />
 
             {/* Others Page */}
             <Route path="/profile" element={<UserProfiles />} />

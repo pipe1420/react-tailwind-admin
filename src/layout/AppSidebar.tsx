@@ -32,7 +32,7 @@ type NavItem = {
   }[];
 };
 
-type Role = "resident" | "guard" | "admin";
+type Role = "resident" | "guard" | "admin" | "dev";
 
 const ResidentItems: NavItem[] = [
   {
@@ -43,7 +43,7 @@ const ResidentItems: NavItem[] = [
   },
 
   { 
-    name: "Control de Acceso",
+    name: "Accesos",
     icon: <PageIcon />,
     path: "/access-control",
     new: true,
@@ -53,7 +53,7 @@ const ResidentItems: NavItem[] = [
   {
     name: "Visitas",
     icon: <PageIcon />,
-    path: "/visits",
+    path: "/access-visits",
     pro: false,
     roles: ["resident", "guard", "admin"],
   },
@@ -69,7 +69,7 @@ const ResidentItems: NavItem[] = [
   {
     name: "Mis Vehículos",
     icon: <CalenderIcon />,
-    path: "/vehicles-resident",
+    path: "/vehicles",
     pro: false,
     roles: ["resident"],
   },
@@ -77,21 +77,21 @@ const ResidentItems: NavItem[] = [
   {
     name: "Control Vehicular",
     icon: <CalenderIcon />,
-    path: "/vehicles-resident",
+    path: "/vehicles",
     pro: false,
     roles: ["guard"],
   },
 {
     name: "Vehículos",
     icon: <CalenderIcon />,
-    path: "/vehicles-resident",
+    path: "/vehicles",
     pro: false,
     roles: ["admin"],
   },
   {
     name: "Historial",
     icon: <ListIcon />,
-    path: "/history-log",
+    path: "/history",
     pro: false,
     roles: ["resident", "guard", "admin"],
   },
@@ -121,24 +121,24 @@ const ResidentItems: NavItem[] = [
   },
 ];
 
-const AdminItems: NavItem[] = [ 
+const DevItems: NavItem[] = [ 
   {
     icon: <PlugInIcon />,
     name: "Conexiones",
-    path: "/config",
-    roles: ["admin"],
+    path: "/conections",
+    roles: ["dev"],
   },
   {
     icon: <DocsIcon />,
     name: "Logs",
-    path: "/config",
-    roles: ["admin"],
+    path: "/logs",
+    roles: ["dev"],
   },
   {
     icon: <ListIcon />,
     name: "Diagnostico",
-    path: "/config",
-    roles: ["admin"],
+    path: "/diagnostic",
+    roles: ["dev"],
   },
   ];
 
@@ -176,7 +176,7 @@ const AppSidebar: React.FC = () => {
   useEffect(() => {
     let submenuMatched = false;
     ["main", "others"].forEach((menuType) => {
-      const items = menuType === "main" ? ResidentItems : AdminItems;
+      const items = menuType === "main" ? ResidentItems : DevItems;
       items.forEach((nav, index) => {
         if (nav.subItems) {
           nav.subItems.forEach((subItem) => {
@@ -433,7 +433,7 @@ const AppSidebar: React.FC = () => {
                   <HorizontaLDots />
                 )}
               </h2>
-              {renderMenuItems(AdminItems, "others")}
+              {renderMenuItems(DevItems, "others")}
             </div>
 
 

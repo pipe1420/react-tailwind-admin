@@ -15,7 +15,7 @@ export default function AccessControl() {
           <div>
             <div className="mx-auto w-full max-w-[385px]">
               <h2 className="font-bold text-center text-gray-800 mb-7 text-title-sm dark:text-white/90">
-                Flexible Plans Tailored to Fit Your Unique Needs!
+                Control de Accesos
               </h2>
             </div>
             <div>
