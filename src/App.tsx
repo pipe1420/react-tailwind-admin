@@ -1,4 +1,5 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router";
+import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from "react-router";
+import { useEffect, useState } from "react";
 import SignIn from "./pages/AuthPages/SignIn";
 import SignUp from "./pages/AuthPages/SignUp";
 import NotFound from "./pages/OtherPage/NotFound";
@@ -34,20 +35,64 @@ import Conecctions from "./pages/developer/Conecctions";
 import Logs from "./pages/developer/Logs";
 import Diagnostic from "./pages/developer/Diagnostic";
 
+// 🛡️ GUARDIÁN DE RUTA: Bloquea el renderizado inmediatamente si no hay sesión
+// 🛡️ GUARDIÁN SEGURO CON VERIFICACIÓN DE API
+const ProtectedRoute = () => {
+  const [checkingAuth, setCheckingAuth] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const verifySession = async () => {
+      try {
+        // Consultamos al endpoint de FastAPI encargado de verificar quién está logueado
+        const response = await fetch("http://localhost:8000/api/users/me", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          // 🔑 CRUCIAL: Obliga al navegador a enviar la cookie HttpOnly a FastAPI
+          credentials: "include" 
+        });
+
+        if (response.ok) {
+          setIsAuthenticated(true);
+        } else {
+          setIsAuthenticated(false);
+        }
+      } catch {
+        setIsAuthenticated(false);
+      } finally {
+        setCheckingAuth(false);
+      }
+    };
+
+    verifySession();
+  }, []);
+
+  // Bloqueo de parpadeo: no carga ningún layout mientras se valida la sesión
+  if (checkingAuth) return null; 
+
+  if (!isAuthenticated) {
+    return <Navigate to="/signin" replace />;
+  }
+
+  return <Outlet />;
+};
+
+
+
 export default function App() {
   return (
-    <>
-      <Router>
-        <ScrollToTop />
-        <Routes>
-          {/* Dashboard Layout */}
+    <Router>
+      <ScrollToTop />
+      <Routes>
+        
+        {/* 🔒 Rutas Privadas Totalmente Protegidas por Backend y Frontend */}
+        <Route element={<ProtectedRoute />}>
           <Route element={<AppLayout />}>
             <Route index path="/" element={<Dashboard />} />
-            {/* Accesos */}
             <Route path="/access-control" element={<AccessControl />} />
             <Route path="/vehicles" element={<Vehicles/>} />
-
-            {/* Administración de Perfiles   */}
             <Route path="/admin-profiles" element={<AdminProfiles />} />
             <Route path="/history" element={<AccessHistory />} />
             <Route path="/users" element={<Users />} />
@@ -55,49 +100,31 @@ export default function App() {
             <Route path="/residents" element={<Residents />} />
             <Route path="/reports" element={<Reports />} />
             <Route path="/config" element={<Config />} />
-
-            {/* Developer   */}
             <Route path="/conections" element={<Conecctions />} />
             <Route path="/diagnostic" element={<Diagnostic />} />
             <Route path="/logs" element={<Logs />} />
-
-            {/* Others Page */}
             <Route path="/profile" element={<UserProfiles />} />
             <Route path="/calendar" element={<Calendar />} />
             <Route path="/blank" element={<Blank />} />
-
-            {/* Forms */}
             <Route path="/form-elements" element={<FormElements />} />
-
-            {/* Tables */}
             <Route path="/basic-tables" element={<BasicTables />} />
-
-            {/* Ui Elements */}
             <Route path="/alerts" element={<Alerts />} />
             <Route path="/avatars" element={<Avatars />} />
             <Route path="/badge" element={<Badges />} />
             <Route path="/buttons" element={<Buttons />} />
             <Route path="/images" element={<Images />} />
             <Route path="/videos" element={<Videos />} />
-
-            {/* Charts */}
             <Route path="/line-chart" element={<LineChart />} />
             <Route path="/bar-chart" element={<BarChart />} />
           </Route>
+        </Route>
 
-
-          {/* Auth Layout */}
-          <Route path="/signin" element={<SignIn />} />
-          <Route path="/signup" element={<SignUp />} />
-
-          
-
-          {/* Fallback Route */}
-          <Route path="*" element={<NotFound />} />
-
-          
-        </Routes>
-      </Router>
-    </>
+        {/* 🔓 Rutas Públicas */}
+        <Route path="/signin" element={<SignIn />} />
+        <Route path="/signup" element={<SignUp />} />
+        {/* Fallback Route */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </Router>
   );
 }

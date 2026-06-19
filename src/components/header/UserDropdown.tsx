@@ -17,40 +17,33 @@ export default function UserDropdown() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  // useEffect para consumir el endpoint /me al montar el componente
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const token = localStorage.getItem("token");
-        
-        // Si no hay token guardado, cancelamos la carga y redirigimos (o manejamos el estado)
-        if (!token) {
-          setLoading(false);
-          return;
-        }
-
-        const response = await fetch("http://127.0.0.1:8000/me", {
+        // Realizamos la consulta empleando localhost en lugar de la IP numérica
+        const response = await fetch("http://localhost:8000/api/users/me", {
           method: "GET",
           headers: {
-            "Authorization": `Bearer ${token}`,
             "Content-Type": "application/json",
           },
+          // 🔑 CRUCIAL: Envía la cookie HttpOnly de forma automática
+          credentials: "include" 
         });
 
         if (response.ok) {
           const data = await response.json();
-          // Mapeamos los datos de tu API (ej: full_name o username) al estado local
           setUser({
             name: data.first_name && data.last_name ? `${data.first_name} ${data.last_name}` : "Usuario",
             email: data.email || "",
             avatar: data.avatar_url || "/images/user/default-avatar.jpg",
           });
         } else {
-          // Si el token expiró o es inválido, limpiamos el almacenamiento
-          localStorage.removeItem("token");
+          // Si el servidor responde 401 (sin sesión), dejamos el usuario como null
+          setUser(null);
         }
       } catch (error) {
         console.error("Error al obtener el perfil del usuario:", error);
+        setUser(null);
       } finally {
         setLoading(false);
       }
@@ -58,6 +51,7 @@ export default function UserDropdown() {
 
     fetchUserData();
   }, []);
+
 
   function toggleDropdown() {
     setIsOpen(!isOpen);

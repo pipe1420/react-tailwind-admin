@@ -13,50 +13,43 @@ export default function SignInForm() {
   const [error, setError] = useState<string | null>(null);
   
   const navigate = useNavigate();
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
   const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setLoading(true);
-  setError(null);
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
 
-  try {
-    // 1. URL limpia sin el prefijo /api
-    const url = "http://localhost:8000/login"; 
-    
-    // 2. Construir los datos como Form Data utilizando URLSearchParams
-    const formData = new URLSearchParams();
-    formData.append("username", email); // FastAPI exige que el campo se llame 'username'
-    formData.append("password", password);
+    try {
+      const url = "http://localhost:8000/login"; 
+      
+      const formData = new URLSearchParams();
+      formData.append("username", email); 
+      formData.append("password", password);
 
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        // Cabecera obligatoria para que FastAPI procese el formulario
-        "Content-Type": "application/x-www-form-urlencoded", 
-      },
-      body: formData, // Pasamos el objeto de formulario estructurado
-    });
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded", 
+        },
+        credentials: "include",
+        body: formData,
+      });
 
-    const data = await response.json();
+      const data = await response.json();
 
-    if (!response.ok) {
-      throw new Error(data.detail || "Credenciales incorrectas");
+      if (!response.ok) {
+        throw new Error(data.detail || "Credenciales incorrectas");
+      }
+
+      navigate("/");
+
+    } catch {
+      setError("Ocurrió un error al iniciar sesión");
+    } finally {
+      setLoading(false);
     }
-
-    if (data.access_token) {
-      localStorage.setItem("token", data.access_token);
-      navigate("/"); 
-    } else {
-      throw new Error("El servidor no retornó un token de acceso válido.");
-    }
-
-  } catch (err: any) {
-    setError(err.message || "Ocurrió un error al iniciar sesión");
-  } finally {
-    setLoading(false);
-  }
 };
+
 
   return (
     <div className="flex flex-col flex-1">
@@ -113,7 +106,7 @@ export default function SignInForm() {
               </div>
             </div>
 
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button className="w-full" disabled={loading}>
               {loading ? "Cargando..." : "Ingresar"}
             </Button>
           </div>
