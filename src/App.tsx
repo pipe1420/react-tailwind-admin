@@ -1,5 +1,4 @@
 import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from "react-router";
-import { useEffect, useState } from "react";
 import SignIn from "./pages/AuthPages/SignIn";
 import SignUp from "./pages/AuthPages/SignUp";
 import NotFound from "./pages/OtherPage/NotFound";
@@ -34,50 +33,25 @@ import Config from "./pages/Config/Config";
 import Conecctions from "./pages/developer/Conecctions";
 import Logs from "./pages/developer/Logs";
 import Diagnostic from "./pages/developer/Diagnostic";
+import { useAuth } from "./context/AuthContext";
 
 // 🛡️ GUARDIÁN DE RUTA: Bloquea el renderizado inmediatamente si no hay sesión
-// 🛡️ GUARDIÁN SEGURO CON VERIFICACIÓN DE API
+// 🛡️ GUARDIÁN TOTALMENTE CONSUMIDOR DEL CONTEXTO (0% llamadas HTTP propias)
 const ProtectedRoute = () => {
-  const [checkingAuth, setCheckingAuth] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { user, loading } = useAuth(); // 👈 Consume el estado que ya descargó el AuthContext
 
-  useEffect(() => {
-    const verifySession = async () => {
-      try {
-        // Consultamos al endpoint de FastAPI encargado de verificar quién está logueado
-        const response = await fetch("http://localhost:8000/api/users/me", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          // 🔑 CRUCIAL: Obliga al navegador a enviar la cookie HttpOnly a FastAPI
-          credentials: "include" 
-        });
+  // Bloqueo estricto del parpadeo: no renderiza nada mientras el contexto inicializa
+  if (loading) return null; 
 
-        if (response.ok) {
-          setIsAuthenticated(true);
-        } else {
-          setIsAuthenticated(false);
-        }
-      } catch {
-        setIsAuthenticated(false);
-      } finally {
-        setCheckingAuth(false);
-      }
-    };
-
-    verifySession();
-  }, []);
-
-  // Bloqueo de parpadeo: no carga ningún layout mientras se valida la sesión
-  if (checkingAuth) return null; 
-
-  if (!isAuthenticated) {
+  // Si tras terminar la carga global no hay usuario válido, expulsa de inmediato
+  if (!user) {
     return <Navigate to="/signin" replace />;
   }
 
+  // Luz verde: renderiza las pantallas privadas de forma instantánea
   return <Outlet />;
 };
+
 
 
 
