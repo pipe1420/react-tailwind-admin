@@ -5,25 +5,22 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 export const userService = {
   getAllUsers: async (): Promise<User[]> => {
     try {
-      // Obtener el token guardado en el paso anterior
-      const token = localStorage.getItem('token');
-
-      const response = await fetch(`${API_URL}/users`, {
+      // 🔑 CONEXIÓN SEGURA: El navegador adjuntará la cookie HttpOnly automáticamente gracias a credentials: 'include'
+      const response = await fetch(`${API_URL}/api/users/`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          // Enviamos el Bearer token requerido por el backend
-          ...(token && { 'Authorization': `Bearer ${token}` })
         },
+        credentials: 'include' // 👈 OBLIGATORIO: Envía la sesión encriptada a FastAPI
       });
 
       if (!response.ok) {
         if (response.status === 401) {
-          // Opcional: Manejar token expirado o inválido (ej. redirigir a /signin)
-          localStorage.removeItem('token');
-          window.location.href = '/signin';
+          // Si el servidor invalida la sesión, forzamos la redirección nativa
+          window.location.replace('/signin');
+          throw new Error('Sesión expirada o no autorizada');
         }
-        throw new Error(`Error ${response.status}: No autorizado o recurso no encontrado`);
+        throw new Error(`Error ${response.status}: Recurso no encontrado`);
       }
 
       const data: User[] = await response.json();

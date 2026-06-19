@@ -25,7 +25,7 @@ import AccessHistory from "./pages/Access/AccessHistory";
 import Vehicles from "./pages/Vehicles/Vehicles";
 
 import Dashboard from "./pages/Dashboard/Dashboard";
-import Users from "./pages/Users";
+import Users from "./pages/Users/Users";
 import AccessVisits from "./pages/Access/AccessVisits";
 import Residents from "./pages/Users/Residents";
 import Reports from "./pages/Reports/Reports";

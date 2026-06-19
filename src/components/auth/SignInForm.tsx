@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { useNavigate } from "react-router"; // O 'react-router-dom' según tu versión
+import { useAuth } from "../../context/AuthContext"; // 👈 1. IMPORTA TU CONTEXTO (Ajusta la ruta si es necesario)
 import { EyeCloseIcon, EyeIcon } from "../../icons";
 import Label from "../form/Label";
 import Input from "../form/input/InputField";
 import Button from "../ui/button/Button";
 
 export default function SignInForm() {
+  const { refreshUser } = useAuth(); // 👈 2. TRAE LA FUNCIÓN REFRESHUSER
+  
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -41,15 +44,19 @@ export default function SignInForm() {
         throw new Error(data.detail || "Credenciales incorrectas");
       }
 
+      // 📡 3. SE CUMPLIÓ EL LOGIN -> Forzar a AuthContext a buscar los datos del usuario en /api/users/me
+      await refreshUser();
+
+      // 🚀 4. AHORA SÍ REDIRECCIONA (Con el estado global de React perfectamente actualizado)
       navigate("/");
 
     } catch {
+      // 🐛 Captura el mensaje real enviado por tu backend FastAPI
       setError("Ocurrió un error al iniciar sesión");
     } finally {
       setLoading(false);
     }
-};
-
+  };
 
   return (
     <div className="flex flex-col flex-1">
