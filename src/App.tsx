@@ -30,13 +30,12 @@ import AccessVisits from "./pages/Access/AccessVisits";
 import Residents from "./pages/Users/Residents";
 import Reports from "./pages/Reports/Reports";
 import Config from "./pages/Config/Config";
-import Conecctions from "./pages/developer/Conecctions";
-import Logs from "./pages/developer/Logs";
-import Diagnostic from "./pages/developer/Diagnostic";
+import Conecctions from "./pages/Developer/Conecctions";
+import Logs from "./pages/Developer/Logs";
+import Diagnostic from "./pages/Developer/Diagnostic";
 import { useAuth } from "./context/AuthContext";
 
 // 🛡️ GUARDIÁN DE RUTA: Bloquea el renderizado inmediatamente si no hay sesión
-// 🛡️ GUARDIÁN TOTALMENTE CONSUMIDOR DEL CONTEXTO (0% llamadas HTTP propias)
 const ProtectedRoute = () => {
   const { user, loading } = useAuth(); // 👈 Consume el estado que ya descargó el AuthContext
 
@@ -52,16 +51,13 @@ const ProtectedRoute = () => {
   return <Outlet />;
 };
 
-
-
-
 export default function App() {
   return (
     <Router>
       <ScrollToTop />
       <Routes>
         
-        {/* 🔒 Rutas Privadas Totalmente Protegidas por Backend y Frontend */}
+        {/* Rutas Privadas Totalmente Protegidas por Backend y Frontend */}
         <Route element={<ProtectedRoute />}>
           <Route element={<AppLayout />}>
             <Route index path="/" element={<Dashboard />} />
@@ -93,7 +89,7 @@ export default function App() {
           </Route>
         </Route>
 
-        {/* 🔓 Rutas Públicas */}
+        {/* Rutas Públicas */}
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
         {/* Fallback Route */}

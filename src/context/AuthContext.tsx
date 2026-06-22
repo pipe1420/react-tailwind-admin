@@ -1,10 +1,21 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { userService } from "../services/userService"; // 👈 Asegúrate de que la ruta de importación sea correcta
+
+interface Department {
+  id?: number | null;
+  number: string;
+  purchase_date?: string;
+  condominium_id?: number;
+}
 
 interface User {
   name: string;
   email: string;
   avatar?: string;
   role: string;
+  role_description: string;
+  permissions: string[]; // 👈 Lista de nombres: ["Inicio", "Visitas", ...]
+  department:  Department | null;
 }
 
 interface AuthContextType {
@@ -21,22 +32,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // 📡 Función única para consultar la sesión real al backend de FastAPI
+  // 📡 Función modificada para utilizar el servicio unificado
   const fetchUserData = async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/users/me", {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include", // 🔑 INDISPENSABLE: Envía de forma automática la cookie HttpOnly
-      });
+      const data = await userService.getCurrentUser(); 
 
-      if (response.ok) {
-        const data = await response.json();
+      if (data) {
+        // Extraemos los nombres de los permisos en un array plano de strings
+        const extractedPermissions = data.role?.permissions?.map((p: any) => p.name) || [];
+        
         setUser({
           name: data.first_name && data.last_name ? `${data.first_name} ${data.last_name}` : "Usuario",
           email: data.email || "",
-          avatar: data.avatar_url || "/images/user/default-avatar.jpg",
-          role: data.role?.name || "resident", 
+          department: data.department ? {
+            id: data.department.id,
+            number: data.department.number,
+            purchase_date: data.department.purchase_date,
+            condominium_id: data.department.condominium_id
+          } : null,
+          role: data.role?.name || "", 
+          role_description: data.role?.description || "", 
+          permissions: extractedPermissions,
         });
       } else {
         setUser(null);
@@ -49,33 +65,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  // Al cargar o refrescar el navegador, se valida contra la API, nunca contra localStorage
-    // 🛡️ Filtro de ciclo de vida corregido y reactivo a los cambios de URL
   useEffect(() => {
     const checkRouteAndFetch = () => {
       const rutaActual = window.location.pathname;
       const esPaginaPublica = rutaActual === "/signin" || rutaActual === "/signup";
 
       if (esPaginaPublica) {
-        setLoading(false); // Permite dibujar el login de inmediato sin spinners
-        return;            // Detiene la petición síncrona redundante si ya estás fuera
+        setLoading(false); 
+        return;            
       }
 
-      // Si el usuario no está en el login (por ejemplo, tras un navigate hacia "/"), activa la validación real
       setLoading(true);
       fetchUserData();
     };
 
     checkRouteAndFetch();
 
-    // 📡 Escuchador para detectar cuando React Router cambia la URL de forma interna sin recargar la pestaña
     window.addEventListener("popstate", checkRouteAndFetch);
     return () => window.removeEventListener("popstate", checkRouteAndFetch);
   }, []);
 
-
-  // Cierre de sesión seguro: destruye la cookie en FastAPI y limpia la memoria RAM del Front
- const logout = async () => {
+  const logout = async () => {
     try {
       await fetch("http://localhost:8000/logout", {
         method: "POST",
@@ -94,7 +104,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       {children}
     </AuthContext.Provider>
   );
-
 }
 
 export function useAuth() {

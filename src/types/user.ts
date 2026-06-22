@@ -10,11 +10,19 @@ export interface Role {
   permissions: Permission[];
 }
 
+export interface Department {
+  id?: number | null;
+  number: string;
+  purchase_date?: string;
+  condominium_id?: number;
+}
+
 export interface User {
-  id: number; // Tu backend usa números enteros incrementales para las llaves primarias
+  id: number; 
   email: string;
   first_name: string;
   last_name: string;
   is_active: boolean;
   role: Role; // Relación completa con el objeto de rol y sus permisos
+  department: Department | null;
 }

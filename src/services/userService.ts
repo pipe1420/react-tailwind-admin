@@ -1,30 +1,51 @@
-import { User } from '../types/user';
+import { User } from '../types/user'; // Asegúrate de que esta interfaz refleje el tipado completo si es necesario
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 export const userService = {
-  getAllUsers: async (): Promise<User[]> => {
+  // 📡 Nueva función para obtener la sesión del usuario actual
+  getCurrentUser: async (): Promise<User> => {
     try {
-      // 🔑 CONEXIÓN SEGURA: El navegador adjuntará la cookie HttpOnly automáticamente gracias a credentials: 'include'
-      const response = await fetch(`${API_URL}/api/users/`, {
+      const response = await fetch(`${API_URL}/api/users/me`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },
-        credentials: 'include' // 👈 OBLIGATORIO: Envía la sesión encriptada a FastAPI
+        credentials: 'include'
       });
 
       if (!response.ok) {
         if (response.status === 401) {
-          // Si el servidor invalida la sesión, forzamos la redirección nativa
+          window.location.replace('/signin');
+          throw new Error('Sesión expirada o no autorizada');
+        }
+        throw new Error(`Error ${response.status}: No se pudo obtener el usuario`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error en userService.getCurrentUser:', error);
+      throw error;
+    }
+  },
+
+  getAllUsers: async (): Promise<User[]> => {
+    try {
+      const response = await fetch(`${API_URL}/api/users/`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include' 
+      });
+
+      if (!response.ok) {
+        if (response.status === 401) {
           window.location.replace('/signin');
           throw new Error('Sesión expirada o no autorizada');
         }
         throw new Error(`Error ${response.status}: Recurso no encontrado`);
       }
 
-      const data: User[] = await response.json();
-      return data;
+      return await response.json();
     } catch (error) {
       console.error('Error al obtener los usuarios:', error);
       throw error;

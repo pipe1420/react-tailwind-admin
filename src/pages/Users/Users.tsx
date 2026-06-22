@@ -141,6 +141,12 @@ export default function Users() {
                         {usuario.is_active ? "Activo" : "Inactivo"}
                       </Badge>
                     </TableCell>
+
+                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                      <button className="inline-flex items-center justify-center gap-2 rounded-lg transition  px-4 py-3 text-sm bg-brand-500 text-white shadow-theme-xs hover:bg-brand-600 disabled:bg-brand-300 ">
+                        Editar
+                      </button>
+                    </TableCell>
                   </TableRow>
                 );
               })}
@@ -158,5 +164,11 @@ export default function Users() {
         </div>
       </div>
     </div>
+    
+
+
+    
+
+
   );
 }
