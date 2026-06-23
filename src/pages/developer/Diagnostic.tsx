@@ -16,7 +16,7 @@ export default function Diagnostic() {
     <div>
       <PageMeta
         title="Diagnostico Dashboard"
-        description="This is React.js Form Elements  Dashboard page for TailAdmin - React.js Tailwind CSS Admin Dashboard Template"
+        description="Esta es una pagina para diagnosticar problemas y/o inconvenientes del sistema, pruebas de conexion y funcionamiento."
       />
       <PageBreadcrumb pageTitle="Form Elements" />
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">

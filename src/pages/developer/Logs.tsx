@@ -16,7 +16,7 @@ export default function Logs() {
     <div>
       <PageMeta
         title="Logs Dashboard"
-        description="Este es una página de dashboard de logs"
+        description="Este es una página de dashboard de logs de estado de los servicios, errores o perdidas de conexion o internet del sistema."
       />
       <PageBreadcrumb pageTitle="Form Elements" />
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">

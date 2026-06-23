@@ -22,7 +22,6 @@ type NavItem = {
   code?: string; 
   icon: React.ReactNode;
   path?: string;
-  roles?: Role[];
   pro?: boolean;
   new?: boolean;
   subItems?: {
@@ -33,78 +32,68 @@ type NavItem = {
   }[];
 };
 
-type Role = "resident" | "guard" | "admin" | "dev";
 
 const ResidentItems: NavItem[] = [
   {
     name: "Inicio", 
-    code: "dashboard", // 👈 Coincide con el code de la API
+    code: "dashboard",
     icon: <GridIcon />,
     path: "/",
-    roles: ["resident", "guard", "admin"],
   },
   { 
-    name: "Control de Acceso", 
-    code: "access_control", // 👈 Coincide con el code de la API
+    name: "Accesos", 
+    code: "access", 
     icon: <PageIcon />,
-    path: "/access-control",
+    path: "/access",
     new: true,
-    roles: ["guard", "admin"],
   },
   {
     name: "Visitas", 
-    code: "visits", // 👈 Coincide con el code de la API
+    code: "visits",
     icon: <PageIcon />,
     path: "/access-visits",
     pro: false,
-    roles: ["resident", "guard", "admin"],
   },
   {
     name: "Residentes", 
-    code: "residents", // 👈 Coincide con el code de la API
+    code: "residents",
     icon: <CalenderIcon />,
     path: "/residents",
     pro: false,
-    roles: ["admin"],
   },
   {
     name: "Vehículos", 
-    code: "vehicles", // 👈 Coincide con el code de la API
+    code: "vehicles",
     icon: <CalenderIcon />,
     path: "/vehicles",
     pro: false,
-    roles: ["admin", "resident", "guard"],
   },
   {
     name: "Historial", 
     icon: <ListIcon />,
     path: "/history",
     pro: false,
-    roles: ["resident", "guard", "admin"],
   },
   {
     name: "Usuarios", 
-    code: "users", // 👈 Coincide con el code de la API
-    icon: <BoxCubeIcon />,
+    code: "users",
+    icon: <BoxCubeIcon/>,
     path: "/users",
     pro: false,
-    roles: ["admin"],
   },
   {
     name: "Reportes", 
-    code: "reports", // 👈 Coincide con el code de la API
+    code: "reports",
     icon: <PieChartIcon />,
     path: "/reports",
     pro: false,
-    roles: ["admin"],
   },
   {
     name: "Configuración", 
-    code: "settings", // 👈 Coincide con el code de la API
+    code: "settings",
     icon: <PlugInIcon />,
     path: "/config",
     pro: false,
-    roles: ["admin"],
   },
 ];
 
@@ -113,19 +102,16 @@ const DevItems: NavItem[] = [
     icon: <PlugInIcon />,
     name: "Conexiones",
     path: "/conections",
-    roles: ["dev"],
   },
   {
     icon: <DocsIcon />,
     name: "Logs",
     path: "/logs",
-    roles: ["dev"],
   },
   {
     icon: <ListIcon />,
     name: "Diagnostico",
     path: "/diagnostic",
-    roles: ["dev"],
   },
 ];
 
@@ -295,15 +281,35 @@ const AppSidebar: React.FC = () => {
       onMouseLeave={() => setIsHovered(false)}
     >
       <div className={`py-8 flex ${!isExpanded && !isHovered ? "lg:justify-center" : "justify-start"}`}>
-        <Link to="/" className="flex items-center gap-2">
+         <Link to="/" className="flex items-center gap-2">
           {isExpanded || isHovered || isMobileOpen ? (
             <>
-              <img className="dark:hidden" src="/images/logo/logo-ciss.svg" alt="Logo" width={80} height={40} />
-              <img className="hidden dark:block" src="/images/logo/logo-ciss.svg" alt="Logo" width={80} height={40} />
-              <p className="ml-2 text-lg font-bold text-gray-900 dark:text-white whitespace-nowrap">Fuentes de Rucalhue 2</p>
+              <img
+                className="dark:hidden"
+                src="/images/logo/logo-ciss.svg"
+                alt="Logo"
+                width={80}
+                height={40}
+              />
+              <img
+                className="hidden dark:block"
+                src="/images/logo/logo-ciss.svg"
+                alt="Logo"
+                width={80}
+                height={40}
+
+              />
+              <p className="ml-2 text-lg font-bold text-gray-900 dark:text-white">
+                Fuentes de Rucalhue 2
+              </p>
             </>
           ) : (
-            <img src="/images/logo/logo-ciss.svg" alt="Logo" width={32} height={32} />
+            <img
+              src="/images/logo/logo-ciss.svg"
+              alt="Logo"
+              width={32}
+              height={32}
+            />
           )}
         </Link>
       </div>

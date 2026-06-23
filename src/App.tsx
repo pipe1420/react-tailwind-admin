@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from "react-router";
+import { Toaster } from 'react-hot-toast';
 import SignIn from "./pages/AuthPages/SignIn";
 import SignUp from "./pages/AuthPages/SignUp";
 import NotFound from "./pages/OtherPage/NotFound";
@@ -59,9 +60,11 @@ export default function App() {
         
         {/* Rutas Privadas Totalmente Protegidas por Backend y Frontend */}
         <Route element={<ProtectedRoute />}>
+       
           <Route element={<AppLayout />}>
+           
             <Route index path="/" element={<Dashboard />} />
-            <Route path="/access-control" element={<AccessControl />} />
+            <Route path="/access" element={<AccessControl />} />
             <Route path="/vehicles" element={<Vehicles/>} />
             <Route path="/admin-profiles" element={<AdminProfiles />} />
             <Route path="/history" element={<AccessHistory />} />
@@ -86,15 +89,30 @@ export default function App() {
             <Route path="/videos" element={<Videos />} />
             <Route path="/line-chart" element={<LineChart />} />
             <Route path="/bar-chart" element={<BarChart />} />
+            
           </Route>
+           
         </Route>
+
+       
 
         {/* Rutas Públicas */}
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
         {/* Fallback Route */}
         <Route path="*" element={<NotFound />} />
+         
       </Routes>
+        <Toaster 
+          position="top-center" 
+          containerStyle={{
+            top: 40, // Lo baja un poco para que no pegue al borde extremo de la pantalla
+            zIndex: 99999, // Lo mantiene al frente de todo el Dashboard
+          }} 
+          reverseOrder={false} 
+        />
     </Router>
+
+    
   );
 }
