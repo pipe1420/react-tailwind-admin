@@ -314,17 +314,33 @@ const AppSidebar: React.FC = () => {
         </Link>
       </div>
 
-      <div className="flex flex-col overflow-y-auto duration-300 ease-linear no-scrollbar">
+        {/* Navegación y Menús */}
+      <div className="flex flex-col overflow-y-auto duration-300 ease-linear no-scrollbar flex-grow">
         <nav className="mb-6">
-          <div className="flex flex-col gap-4">
-            <div className="sidebar-container">
-              {renderMenuItems(filteredResidentItems, "main")}
-              {filteredDevItems.length > 0 && renderMenuItems(filteredDevItems, "others")}
-            </div>
+          <div className="sidebar-container flex flex-col">
+            {/* Menú Principal */}
+            {renderMenuItems(filteredResidentItems, "main")}
+            
+            {/* Menú de Desarrollo */}
+            {filteredDevItems.length > 0 && (
+              <div className="mt-4 border-t border-gray-100 dark:border-gray-800 pt-4">
+                <p className={`text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-3 ${!isExpanded && !isHovered ? "text-center" : "px-3"}`}>
+                  {isExpanded || isHovered || isMobileOpen ? "Desarrollo" : "Dev"}
+                </p>
+                {renderMenuItems(filteredDevItems, "others")}
+              </div>
+            )}
           </div>
         </nav>
-        {isExpanded || isHovered || isMobileOpen ? <SidebarWidget /> : null}
       </div>
+
+       {/* Widget del Sidebar en la parte inferior */}
+      {(isExpanded || isHovered || isMobileOpen) && (
+        <div className="mt-auto pb-5">
+          <SidebarWidget />
+        </div>
+      )}
+
     </aside>
   );
 };

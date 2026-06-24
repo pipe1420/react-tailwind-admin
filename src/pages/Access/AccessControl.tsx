@@ -1,25 +1,54 @@
 import toast from "react-hot-toast";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import PageMeta from "../../components/common/PageMeta";
+import { accessLogService } from "../../services/accessLogService";
 
 export default function AccessControl() {
-  // Función para mostrar la notificación tipo Toast
-  const mostrarNotificacion = (tipoAcceso: string, emoji: string) => {
+  // Función que maneja el registro y la notificación del acceso.
+  // Ahora utiliza el servicio 'accessLogService'.
+  const handleAccess = async (accessType: 'vehicular' | 'peatonal', description: string, emoji: string) => {
     const isDarkMode = document.documentElement.classList.contains('dark');
-
-    toast.success(`${emoji} Acceso ${tipoAcceso} abierto correctamente`, {
-      duration: 8000,
+    const toastId = toast.loading('Procesando solicitud...', {
       style: {
-        borderRadius: '10px',
-        background: isDarkMode ? '#1e293b' : '#ffffff', 
+        background: isDarkMode ? '#1e293b' : '#ffffff',
         color: isDarkMode ? '#f8fafc' : '#333333',
-        border: isDarkMode ? '1px solid #334155' : '1px solid #e2e8f0',
-      },
-      iconTheme: {
-        primary: '#22c55e', 
-        secondary: isDarkMode ? '#1e293b' : '#ffffff',
       },
     });
+
+    try {
+      // Llamamos al servicio para registrar el acceso.
+      await accessLogService.registerAccess({
+        accessType: accessType,
+        targetDescription: description,
+      });
+
+      toast.success(`${emoji} Acceso ${accessType} abierto y registrado.`, {
+        id: toastId,
+        duration: 8000,
+        style: {
+          borderRadius: '10px',
+          background: isDarkMode ? '#1e293b' : '#ffffff',
+          color: isDarkMode ? '#f8fafc' : '#333333',
+          border: isDarkMode ? '1px solid #334155' : '1px solid #e2e8f0',
+        },
+        iconTheme: {
+          primary: '#22c55e',
+          secondary: isDarkMode ? '#1e293b' : '#ffffff',
+        },
+      });
+
+    } catch (error) {
+      console.error("Error en la solicitud de acceso:", error);
+      toast.error('No se pudo registrar el acceso. Inténtalo de nuevo.', {
+        id: toastId,
+        style: {
+          borderRadius: '10px',
+          background: isDarkMode ? '#1e293b' : '#ffffff',
+          color: isDarkMode ? '#f8fafc' : '#333333',
+          border: isDarkMode ? '1px solid #334155' : '1px solid #e2e8f0',
+        },
+      });
+    }
   };
 
   return (
@@ -56,7 +85,7 @@ export default function AccessControl() {
                   
                   <div className="mt-8 flex justify-center">
                     <button
-                      onClick={() => mostrarNotificacion('Vehicular', '🚗')}
+                      onClick={() => handleAccess('vehicular', 'Acceso Vehicular Principal', '🚗')}
                       className="flex w-full flex-col items-center justify-center gap-3 rounded-lg bg-blue-600 p-3.5 text-center text-sm font-medium text-white shadow-theme-xs transition-colors hover:bg-blue-700 dark:hover:bg-blue-700"
                       style={{ width: "190px", height: "190px" }}
                     >
@@ -82,7 +111,7 @@ export default function AccessControl() {
                   
                   <div className="mt-8 flex justify-center"> 
                     <button 
-                      onClick={() => mostrarNotificacion('Peatonal', '🚶')}
+                      onClick={() => handleAccess('peatonal', 'Acceso Peatonal Principal', '🚶')}
                       className="flex w-full flex-col items-center justify-center gap-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 p-3.5 text-center text-sm font-medium text-white shadow-theme-xs transition-colors dark:hover:bg-emerald-600 dark:bg-emerald-700" 
                       style={{ width: "190px", height: "190px" }} 
                     > 
