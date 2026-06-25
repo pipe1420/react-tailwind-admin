@@ -75,8 +75,16 @@ export default function NotificationDropdown() {
       <Dropdown
         isOpen={isOpen}
         onClose={closeDropdown}
-        className="absolute -right-[240px] mt-[17px] flex h-[480px] w-[350px] flex-col rounded-2xl border border-gray-200 bg-white p-3 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark sm:w-[361px] lg:right-0"
+        /* 
+          EXPLICACIÓN DE LAS NUEVAS CLASES:
+          - fixed: Se despega del botón y flota con respecto a toda la pantalla del celular (soluciona el corte).
+          - top-16 left-4 right-4: Lo centra de manera perfecta dejando un margen limpio de 16px a cada lado en móviles.
+          - sm:absolute sm:top-auto sm:left-auto sm:right-0 sm:w-[360px]: En pantallas de tablet o escritorio (sm en adelante),
+            el menú vuelve a su comportamiento original pegado al botón y con su ancho estándar.
+        */
+        className="fixed top-16 left-4 right-4 sm:absolute sm:top-auto sm:left-auto sm:right-0 mt-[17px] flex h-[480px] w-auto sm:w-[360px] flex-col rounded-2xl border border-gray-200 bg-white p-3 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark z-50"
       >
+
         <div className="flex items-center justify-between pb-3 mb-3 border-b border-gray-100 dark:border-gray-700">
           <h5 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
             Notificaciones de acceso

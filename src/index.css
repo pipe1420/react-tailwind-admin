@@ -927,3 +927,45 @@ span.flatpickr-weekday,
   background-color: #1e293b !important; /* Fondo oscuro interno para el select */
   color: #ffffff !important;
 }
+
+/* Contenedor del paginador */
+.custom-datatable .dt-paging {
+  display: inline-flex;
+  gap: 0.25rem;
+  padding-top: 1rem;
+}
+
+/* Botones de paginación en Modo Claro */
+.custom-datatable .dt-paging .dt-paging-button {
+  border: 1px solid #e5e7eb !important;
+  background: #ffffff !important;
+  color: #374151 !important;
+  border-radius: 0.375rem !important;
+  padding: 0.25rem 0.75rem !important;
+  font-size: 0.875rem !important;
+  cursor: pointer;
+}
+
+.custom-datatable .dt-paging .dt-paging-button.current {
+  background: #3b82f6 !important; /* Azul para la página activa */
+  color: #ffffff !important;
+  border-color: #3b82f6 !important;
+}
+
+/* Botones de paginación en Modo Noche */
+.dark .custom-datatable .dt-paging .dt-paging-button {
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  background: rgba(255, 255, 255, 0.03) !important;
+  color: #9ca3af !important;
+}
+
+.dark .custom-datatable .dt-paging .dt-paging-button:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff !important;
+}
+
+.dark .custom-datatable .dt-paging .dt-paging-button.current {
+  background: rgba(255, 255, 255, 0.1) !important; /* Gris claro activo o el color acento de tu UI */
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
