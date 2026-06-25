@@ -129,9 +129,9 @@ export default function NotificationDropdown() {
                     </span>
 
                     <span className="flex items-center gap-2 text-gray-500 text-theme-xs dark:text-gray-400">
-                      {/* RESTAURADO: Muestra la ubicación exacta del backend */}
-                      <span>{notification.failure_reason}</span>
-                      
+                      {/* Muestra ubicacion en caso de tener mas de 1 porton de acceso 
+                          <span>{notification.failure_reason}</span>
+                      */}
                       <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
                       
                       <span>

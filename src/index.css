@@ -790,3 +790,140 @@ span.flatpickr-weekday,
 .simplebar-scrollbar.simplebar-visible:before {
   @apply opacity-100;
 }
+
+/* ==========================================
+   ESTILOS GENERALES Y MODO DÍA TABLAS (FONDO CLARO)
+   ========================================== */
+.custom-datatable table.dataTable {
+  border-collapse: collapse !important;
+  margin-top: 1rem !important;
+  margin-bottom: 1rem !important;
+}
+
+/* Encabezados de la tabla */
+.custom-datatable table.dataTable thead th {
+  border-bottom: 1px solid #e5e7eb !important; /* border-gray-200 */
+  color: #374151 !important; /* text-gray-700 */
+  font-weight: 600 !important;
+  padding: 14px 16px !important;
+}
+
+/* Filas del cuerpo */
+.custom-datatable table.dataTable tbody td {
+  border-bottom: 1px solid #f3f4f6 !important; /* border-gray-100 */
+  padding: 14px 16px !important;
+}
+
+/* Contenedores de las rejillas superiores (Buscador y Botones) */
+.custom-datatable .dt-layout-row {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  flex-wrap: wrap !important;
+  gap: 1rem !important;
+}
+
+/* Buscador (Arriba) */
+.custom-datatable .dt-search {
+  margin-bottom: 1rem;
+}
+.custom-datatable .dt-search input {
+  border: 1px solid #e5e7eb !important;
+  border-radius: 0.5rem !important; /* rounded-lg */
+  padding: 0.5rem 1rem !important;
+  background-color: #ffffff !important;
+  color: #1f2937 !important;
+  font-size: 0.875rem !important;
+}
+.custom-datatable .dt-search input:focus {
+  outline: 2px solid transparent !important;
+  border-color: #3b82f6 !important; /* Color azul de foco */
+}
+
+/* Contenedor de Botones de descarga (Excel, PDF, etc) */
+.custom-datatable .dt-buttons {
+  display: flex !important;
+  gap: 0.5rem !important;
+  margin-bottom: 1rem !important;
+}
+
+/* Botones individuales en Modo Claro */
+.custom-datatable .dt-buttons .dt-button {
+  border: 1px solid #e5e7eb !important;
+  background: #ffffff !important;
+  color: #374151 !important;
+  border-radius: 0.5rem !important;
+  padding: 0.5rem 1rem !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  box-shadow: none !important;
+}
+
+.custom-datatable .dt-buttons .dt-button:hover {
+  background: #f9fafb !important;
+  border-color: #d1d5db !important;
+}
+
+/* Footer: Información y Paginador (Abajo) */
+.custom-datatable .dt-info,
+.custom-datatable .dt-length {
+  color: #4b5563 !important; /* text-gray-600 en modo claro */
+  font-size: 0.875rem !important;
+  padding-top: 1rem !important;
+}
+
+/* Selector de filas por página */
+.custom-datatable .dt-length select {
+  border: 1px solid #e5e7eb !important;
+  border-radius: 0.375rem !important;
+  padding: 0.25rem 0.5rem !important;
+  background-color: #ffffff !important;
+  color: #1f2937 !important;
+  margin: 0 0.5rem !important;
+}
+
+/* ==========================================
+   MODO NOCHE (AUTOMÁTICO MEDIANTE LA CLASE .dark)
+   ========================================== */
+.dark .custom-datatable table.dataTable thead th {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #9ca3af !important; /* text-gray-400 */
+}
+
+.dark .custom-datatable table.dataTable tbody td {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Buscador en Modo Noche */
+.dark .custom-datatable .dt-search input {
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  background-color: rgba(255, 255, 255, 0.03) !important;
+  color: #ffffff !important;
+}
+
+/* Botones en Modo Noche */
+.dark .custom-datatable .dt-buttons .dt-button {
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  background: rgba(255, 255, 255, 0.03) !important;
+  color: #ffffff !important;
+}
+
+.dark .custom-datatable .dt-buttons .dt-button:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Footer en Modo Noche */
+.dark .custom-datatable .dt-info,
+.dark .custom-datatable .dt-length {
+  color: #9ca3af !important; /* Cambia a texto gris claro legible */
+}
+
+/* Selector en Modo Noche */
+.dark .custom-datatable .dt-length select {
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  background-color: #1e293b !important; /* Fondo oscuro interno para el select */
+  color: #ffffff !important;
+}
