@@ -30,6 +30,7 @@ export default function UserDropdown() {
       </Link>
     );
   }
+  
   // 1. Añadimos una función helper arriba del componente (o dentro) para extraer las iniciales
   const getInitials = (name: string) => {
     if (!name) return "U";
