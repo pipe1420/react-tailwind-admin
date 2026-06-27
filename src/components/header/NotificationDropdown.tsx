@@ -8,8 +8,13 @@ import { AccessNotification } from "../../types/notification";
 import { es } from "date-fns/locale/es";
 import { formatDistanceToNow } from "date-fns";
 
-export default function NotificationDropdown() {
-  const [isOpen, setIsOpen] = useState(false);
+// Usamos la interfaz de propiedades para conectarlo con el Header
+interface DropdownProps {
+  isOpen: boolean;
+  setOpen: (open: boolean) => void;
+}
+
+export default function NotificationDropdown({ isOpen, setOpen }: DropdownProps) {
   const [notifying, setNotifying] = useState(true);
   const [notifications, setNotifications] = useState<AccessNotification[]>([]);
   const [loading, setLoading] = useState(false);
@@ -19,20 +24,21 @@ export default function NotificationDropdown() {
   };
 
   function toggleDropdown() {
-    setIsOpen(!isOpen);
+    setOpen(!isOpen);
   }
 
   function closeDropdown() {
-    setIsOpen(false);
+    setOpen(false);
   }
 
   const handleClick = async () => {
     toggleDropdown();
+    
+    // Si ya estaba abierto, al hacer click se va a cerrar, no hace falta recargar la API
     if (isOpen) return;
 
     setLoading(true);
     try {
-      // CORREGIDO: Invocamos al servicio pasándole el límite de 10 registros
       const history = await notificationService.getAccessHistory(5);
       setNotifications(history);
       setNotifying(false);
@@ -75,16 +81,8 @@ export default function NotificationDropdown() {
       <Dropdown
         isOpen={isOpen}
         onClose={closeDropdown}
-        /* 
-          EXPLICACIÓN DE LAS NUEVAS CLASES:
-          - fixed: Se despega del botón y flota con respecto a toda la pantalla del celular (soluciona el corte).
-          - top-16 left-4 right-4: Lo centra de manera perfecta dejando un margen limpio de 16px a cada lado en móviles.
-          - sm:absolute sm:top-auto sm:left-auto sm:right-0 sm:w-[360px]: En pantallas de tablet o escritorio (sm en adelante),
-            el menú vuelve a su comportamiento original pegado al botón y con su ancho estándar.
-        */
         className="fixed top-16 left-4 right-4 sm:absolute sm:top-auto sm:left-auto sm:right-0 mt-[17px] flex h-[480px] w-auto sm:w-[360px] flex-col rounded-2xl border border-gray-200 bg-white p-3 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark z-50"
       >
-
         <div className="flex items-center justify-between pb-3 mb-3 border-b border-gray-100 dark:border-gray-700">
           <h5 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
             Notificaciones de acceso
@@ -137,11 +135,7 @@ export default function NotificationDropdown() {
                     </span>
 
                     <span className="flex items-center gap-2 text-gray-500 text-theme-xs dark:text-gray-400">
-                      {/* Muestra ubicacion en caso de tener mas de 1 porton de acceso 
-                          <span>{notification.failure_reason}</span>
-                      */}
                       <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
-                      
                       <span>
                         {(() => {
                           if (!notification.created_at) return "Fecha desconocida";
@@ -163,6 +157,7 @@ export default function NotificationDropdown() {
         </ul>
         <Link
           to="/history"
+          onClick={closeDropdown} // Cerramos el menú al movernos de página
           className="block px-4 py-2 mt-3 text-sm font-medium text-center text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
         >
           Ver todo el historial

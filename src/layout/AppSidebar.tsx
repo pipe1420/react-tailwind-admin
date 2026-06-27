@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation } from "react-router";
 import { useAuth } from "../context/AuthContext";
 
-// Assume these icons are imported from an icon library
 import {
   BoxCubeIcon,
   ChevronDownIcon,
@@ -32,90 +31,24 @@ type NavItem = {
   }[];
 };
 
-
+// 1. LISTA MAESTRA DE USUARIO/RESIDENTE
 const ResidentItems: NavItem[] = [
-  {
-    name: "Inicio", 
-    code: "dashboard",
-    icon: <GridIcon />,
-    path: "/",
-  },
-  { 
-    name: "Accesos", 
-    code: "access", 
-    icon: <PageIcon />,
-    path: "/access",
-    new: true,
-  },
-  {
-    name: "Visitas", 
-    code: "visits",
-    icon: <PageIcon />,
-    path: "/visits",
-    pro: false,
-  },
-  {
-    name: "Residentes", 
-    code: "residents",
-    icon: <CalenderIcon />,
-    path: "/residents",
-    pro: false,
-  },
-  {
-    name: "Vehículos", 
-    code: "vehicles",
-    icon: <CalenderIcon />,
-    path: "/vehicles",
-    pro: false,
-  },
-  {
-    name: "Historial", 
-    icon: <ListIcon />,
-    path: "/history",
-    code: "history",
-    pro: false,
-    new: true,
-  },
-  {
-    name: "Usuarios", 
-    code: "users",
-    icon: <BoxCubeIcon/>,
-    path: "/users",
-    pro: false,
-    new: true,
-  },
-  {
-    name: "Reportes", 
-    code: "reports",
-    icon: <PieChartIcon />,
-    path: "/reports",
-    pro: false,
-  },
-  {
-    name: "Configuración", 
-    code: "settings",
-    icon: <PlugInIcon />,
-    path: "/config",
-    pro: false,
-  },
+  { name: "Inicio", code: "dashboard", icon: <GridIcon />, path: "/" },
+  { name: "Accesos", code: "access", icon: <PageIcon />, path: "/access", new: true },
+  { name: "Visitas", code: "visits", icon: <PageIcon />, path: "/visits" },
+  { name: "Residentes", code: "residents", icon: <CalenderIcon />, path: "/residents" },
+  { name: "Vehículos", code: "vehicles", icon: <CalenderIcon />, path: "/vehicles" },
+  { name: "Historial", code: "history", icon: <ListIcon />, path: "/history", new: true },
+  { name: "Usuarios", code: "users", icon: <BoxCubeIcon/>, path: "/users", new: true },
+  { name: "Reportes", code: "reports", icon: <PieChartIcon />, path: "/reports" },
+  { name: "Configuración", code: "settings", icon: <PlugInIcon />, path: "/config" },
 ];
 
+// 2. LISTA MAESTRA DE DESARROLLO (Ahora cada uno tiene su 'code' para ser evaluado contra la BD)
 const DevItems: NavItem[] = [ 
-  {
-    icon: <PlugInIcon />,
-    name: "Conexiones",
-    path: "/conections",
-  },
-  {
-    icon: <DocsIcon />,
-    name: "Logs",
-    path: "/logs",
-  },
-  {
-    icon: <ListIcon />,
-    name: "Diagnostico",
-    path: "/diagnostic",
-  },
+  { name: "Conexiones", code: "connections", icon: <PlugInIcon />, path: "/connections" },
+  { name: "Logs", code: "logs", icon: <DocsIcon />, path: "/logs" },
+  { name: "Diagnóstico", code: "diagnostics", icon: <ListIcon />, path: "/diagnostic", new: true},
 ];
 
 const AppSidebar: React.FC = () => {
@@ -123,49 +56,41 @@ const AppSidebar: React.FC = () => {
   const { user } = useAuth();
   const location = useLocation();
 
-  // 1. Tu Set optimizado adaptado al nuevo formato del backend (Mantenlo igual)
+  // Mapeo unificado de permisos del backend
   const allowedMenus = useMemo(() => {
-    // 1. Buscamos en la raíz (array plano) o en el objeto estructurado
     const rawPermissions = 
       user?.permissions || 
       user?.role_object?.permissions || 
       user?.role?.permissions || 
       [];
     
-    // Imprime esto para verificar por cuál de las opciones entra y qué estructura tiene
-    console.log("Evaluando permisos en Sidebar:", rawPermissions);
-
     return new Set<string>(
       rawPermissions
         .map((p: any) => {
-          if (typeof p === "string") return p; // Si ya es un array plano de códigos ("dashboard", "visits")
-          if (p && typeof p === "object" && !p.is_disabled) return p.code; // Si viene como objeto y NO está deshabilitado
+          if (typeof p === "string") return p; 
+          if (p && typeof p === "object" && !p.is_disabled) return p.code; 
           return null;
         })
         .filter((code): code is string => typeof code === "string")
     );
   }, [user]);
     
-  // 2. CORREGIDO: Eliminamos el "|| item.name === 'Historial'"
+  // Filtrado de ítems normales por base de datos
   const filteredResidentItems = useMemo(() => {
     return ResidentItems.filter(item => 
       item.code && allowedMenus.has(item.code)
     );
   }, [allowedMenus]);
 
-  console.log(filteredResidentItems)
-
-  // 3. Memorizamos los ítems de desarrollo
+  // UNIFICADO: Los ítems de desarrollo ahora también se filtran dinámicamente por código de base de datos
   const filteredDevItems = useMemo(() => {
-    const isDev = user?.role === "dev";
-    return isDev ? DevItems : [];
-  }, [user?.role]);
+    return DevItems.filter(item => 
+      item.code && allowedMenus.has(item.code)
+    );
+  }, [allowedMenus]);
 
 
-   const [openSubmenu, setOpenSubmenu] = useState<{
-    type: "main" | "others";
-    index: number;
-  } | null>(null);
+  const [openSubmenu, setOpenSubmenu] = useState<{ type: "main" | "others"; index: number; } | null>(null);
   const [subMenuHeight, setSubMenuHeight] = useState<Record<string, number>>({});
   const subMenuRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
@@ -174,18 +99,12 @@ const AppSidebar: React.FC = () => {
     [location.pathname]
   );
 
-
   const renderBadge = (isItemActive: boolean, label: "Nuevo" | "Muy pronto") => (
-    <span
-      className={`ml-auto ${
-        isItemActive ? "menu-dropdown-badge-active" : "menu-dropdown-badge-inactive"
-      } menu-dropdown-badge`}
-    >
+    <span className={`ml-auto ${isItemActive ? "menu-dropdown-badge-active" : "menu-dropdown-badge-inactive"} menu-dropdown-badge`}>
       {label}
     </span>
   );
 
-  // 3. Efecto único corregido usando las listas dinámicas filtradas
   useEffect(() => {
     let submenuMatched = false;
     ["main", "others"].forEach((menuType) => {
@@ -194,10 +113,7 @@ const AppSidebar: React.FC = () => {
         if (nav.subItems) {
           nav.subItems.forEach((subItem) => {
             if (isActive(subItem.path)) {
-              setOpenSubmenu({
-                type: menuType as "main" | "others",
-                index,
-              });
+              setOpenSubmenu({ type: menuType as "main" | "others", index });
               submenuMatched = true;
             }
           });
@@ -205,9 +121,7 @@ const AppSidebar: React.FC = () => {
       });
     });
 
-    if (!submenuMatched) {
-      setOpenSubmenu(null);
-    }
+    if (!submenuMatched) setOpenSubmenu(null);
   }, [location, isActive, filteredResidentItems, filteredDevItems]);
 
   useEffect(() => {
@@ -224,17 +138,12 @@ const AppSidebar: React.FC = () => {
 
   const handleSubmenuToggle = (index: number, menuType: "main" | "others") => {
     setOpenSubmenu((prevOpenSubmenu) => {
-      if (
-        prevOpenSubmenu &&
-        prevOpenSubmenu.type === menuType &&
-        prevOpenSubmenu.index === index
-      ) {
+      if (prevOpenSubmenu && prevOpenSubmenu.type === menuType && prevOpenSubmenu.index === index) {
         return null;
       }
       return { type: menuType, index };
     });
   };
-
 
   const renderMenuItems = (items: NavItem[], menuType: "main" | "others") => (
     <ul className="flex flex-col gap-4">
@@ -280,16 +189,13 @@ const AppSidebar: React.FC = () => {
                 ref={(el) => { subMenuRefs.current[`${menuType}-${index}`] = el; }}
                 className="overflow-hidden transition-all duration-300"
                 style={{ height: openSubmenu?.type === menuType && openSubmenu?.index === index ? `${subMenuHeight[`${menuType}-${index}`] || 0}px` : "0px" }}
-              >
-                {/* Espacio para mapear sub-elementos si fuesen necesarios en el futuro */}
-              </div>
+              />
             )}
           </li>
         );
       })}
     </ul>
   );
-
 
   return (
     <aside
@@ -300,51 +206,30 @@ const AppSidebar: React.FC = () => {
       onMouseLeave={() => setIsHovered(false)}
     >
       <div className={`py-8 flex ${!isExpanded && !isHovered ? "lg:justify-center" : "justify-start"}`}>
-         <Link to="/" className="flex items-center gap-2">
+        <Link to="/" className="flex items-center gap-2">
           {isExpanded || isHovered || isMobileOpen ? (
             <>
-              <img
-                className="dark:hidden"
-                src="/images/logo/logo-ciss.svg"
-                alt="Logo"
-                width={80}
-                height={40}
-              />
-              <img
-                className="hidden dark:block"
-                src="/images/logo/logo-ciss.svg"
-                alt="Logo"
-                width={80}
-                height={40}
-
-              />
-              <p className="ml-2 text-lg font-bold text-gray-900 dark:text-white">
-                Fuentes de Rucalhue 2
-              </p>
+              <img className="dark:hidden" src="/images/logo/logo_edificios.svg" alt="Logo" width={32} height={32} />
+              <img className="hidden dark:block" src="/images/logo/logo_edificios.svg" alt="Logo" width={32} height={32} />
+              <p className="ml-2 text-lg font-bold text-gray-900 dark:text-white">Fuentes de Rucalhue 2</p>
             </>
           ) : (
-            <img
-              src="/images/logo/logo-ciss.svg"
-              alt="Logo"
-              width={32}
-              height={32}
-            />
+            <img src="/images/logo/logo_edificios.svg" alt="Logo" width={32} height={32} />
           )}
         </Link>
       </div>
 
-        {/* Navegación y Menús */}
       <div className="flex flex-col overflow-y-auto duration-300 ease-linear no-scrollbar flex-grow">
         <nav className="mb-6">
           <div className="sidebar-container flex flex-col">
             {/* Menú Principal */}
             {renderMenuItems(filteredResidentItems, "main")}
             
-            {/* Menú de Desarrollo */}
+            {/* Menú de Desarrollo Dinámico */}
             {filteredDevItems.length > 0 && (
               <div className="mt-4 border-t border-gray-100 dark:border-gray-800 pt-4">
                 <p className={`text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-3 ${!isExpanded && !isHovered ? "text-center" : "px-3"}`}>
-                  {isExpanded || isHovered || isMobileOpen ? "Desarrollo" : "Dev"}
+                  {isExpanded || isHovered || isMobileOpen ? "Configuración Avanzada" : "Desarrollador"}
                 </p>
                 {renderMenuItems(filteredDevItems, "others")}
               </div>
@@ -353,13 +238,11 @@ const AppSidebar: React.FC = () => {
         </nav>
       </div>
 
-       {/* Widget del Sidebar en la parte inferior */}
       {(isExpanded || isHovered || isMobileOpen) && (
         <div className="mt-auto pb-5">
           <SidebarWidget />
         </div>
       )}
-
     </aside>
   );
 };

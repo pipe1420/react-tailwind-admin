@@ -25,7 +25,7 @@ export default function AuthLayout({
                 <img
                   width={160}
                   height={33}
-                  src="/images/logo/logo-ciss.svg"
+                  src="/images/logo/logo_edificios.svg"
                   alt="Logo"
                 />
               </Link>
@@ -49,7 +49,7 @@ export default function AuthLayout({
                 <img
                   width={231}
                   height={48}
-                  src="/images/logo/logo-ciss.svg"
+                  src="/images/logo/logo_edificios.svg"
                   alt="Logo"
                 />
               </Link>

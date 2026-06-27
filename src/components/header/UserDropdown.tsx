@@ -1,28 +1,28 @@
-import { useState } from "react";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { Link } from "react-router"; 
 import { useAuth } from "../../context/AuthContext";
 
-export default function UserDropdown() {
-  const [isOpen, setIsOpen] = useState(false);
+// Usamos la interfaz de propiedades que definiste arriba
+interface DropdownProps {
+  isOpen: boolean;
+  setOpen: (open: boolean) => void;
+}
+
+export default function UserDropdown({ isOpen, setOpen }: DropdownProps) {
   const { user, logout } = useAuth();
 
+  // Sincroniza las acciones con el estado del Header padre
   function toggleDropdown() {
-    setIsOpen(!isOpen);
+    setOpen(!isOpen);
   }
 
   function closeDropdown() {
-    setIsOpen(false);
+    setOpen(false);
   }
 
-  // 🚀 FUNCIÓN MEJORADA: Cierre inmediato y asíncrono
   const handleLogout = () => {
-    closeDropdown(); // 1. Cierra el menú visualmente al instante
-    
-    // 2. Disparamos la petición sin el "await" inicial si tu AuthContext 
-    // limpia el estado mutando el context directo, o bien dejamos que corra en background.
-    // Para asegurar que la UI reaccione de inmediato mientras la red procesa:
+    closeDropdown(); 
     logout(); 
   };
 
@@ -60,7 +60,6 @@ export default function UserDropdown() {
         </span>
 
         <span className="block mr-1 font-medium text-theme-sm">{user.name}</span>
-        {/* ... Tu SVG ... */}
       </button>
 
       <Dropdown
@@ -85,7 +84,6 @@ export default function UserDropdown() {
               to="/profile"
               className="flex items-center gap-3 px-3 py-2 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
             >
-              {/* ... Icono ... */}
               Editar Perfil
             </DropdownItem>
           </li>
@@ -96,7 +94,6 @@ export default function UserDropdown() {
               to="/profile"
               className="flex items-center gap-3 px-3 py-2 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
             >
-              {/* ... Icono ... */}
               Soporte
             </DropdownItem>
           </li>
@@ -105,7 +102,6 @@ export default function UserDropdown() {
           onClick={handleLogout}
           className="w-full text-left flex items-center gap-3 px-3 py-2 mt-3 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
         >
-          {/* ... Icono ... */}
           Cerrar sesión
         </button>
       </Dropdown>
