@@ -68,7 +68,12 @@ git clone https://github.com/TailAdmin/free-react-tailwind-admin-dashboard.git
 
 2. Start the development server:
    ```bash
-   npm run dev
+   Comando segun ambientes 
+      Local simple: npm run dev
+      Desarrollo local + Red: npm run dev -- --host
+      Testing local + Red: npm run dev:testing -- --host
+      Produccion: npm run build (genera carpeta dist)
+         Preview Producion para ver como queda: npm run preview -- --host
    # or
    yarn dev
    ```

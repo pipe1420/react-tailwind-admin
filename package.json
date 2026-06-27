@@ -7,7 +7,10 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "build:testing": "vite build --mode testing",
+    "dev:testing": "vite --mode testing"
+    
   },
   "dependencies": {
     "@fullcalendar/core": "^6.1.15",

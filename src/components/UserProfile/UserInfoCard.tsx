@@ -3,14 +3,26 @@ import { Modal } from "../ui/modal";
 import Button from "../ui/button/Button";
 import Input from "../form/input/InputField";
 import Label from "../form/Label";
+import { useAuth } from "../../context/AuthContext";
+import { Link } from "react-router";
 
 export default function UserInfoCard() {
+  const { user } = useAuth();
   const { isOpen, openModal, closeModal } = useModal();
   const handleSave = () => {
     // Handle save logic here
-    console.log("Saving changes...");
+    console.log("Guardando cambios...");
     closeModal();
   };
+  
+  if (!user) {
+    return (
+      <Link to="/signin" className="text-sm font-medium text-gray-700 dark:text-gray-400 hover:underline">
+        Iniciar Sesión
+      </Link>
+    );
+  }
+
   return (
     <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
@@ -25,7 +37,7 @@ export default function UserInfoCard() {
                 Nombre
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                Juan
+                {user?.first_name || "Sin nombre registrado"}
               </p>
             </div>
 
@@ -34,7 +46,7 @@ export default function UserInfoCard() {
                 Apellido
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                Perez
+                {user?.last_name || "Sin apellido registrado"}
               </p>
             </div>
 
@@ -43,7 +55,7 @@ export default function UserInfoCard() {
                 Dirección de Email
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                juanperez@gmail.com
+                {user?.email || "Sin email registrado"}
               </p>
             </div>
 
@@ -52,7 +64,7 @@ export default function UserInfoCard() {
                 Teléfono
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                +569 1234 5678
+                {user?.phone || "Sin teléfono registrado"}
               </p>
             </div>
 
@@ -103,22 +115,22 @@ export default function UserInfoCard() {
                 <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
                   <div className="col-span-2 lg:col-span-1">
                     <Label>Nombre</Label>
-                    <Input type="text" value="Juan" />
+                    <Input type="text" value={user?.first_name} />
                   </div>
 
                   <div className="col-span-2 lg:col-span-1">
                     <Label>Apellido</Label>
-                    <Input type="text" value="Perez" />
+                    <Input type="text" value={user?.last_name} />
                   </div>
 
                   <div className="col-span-2 lg:col-span-1">
                     <Label>Dirección de Email</Label>
-                    <Input type="text" value="juanperez@gmail.com" />
+                    <Input type="text" value={user?.email} />
                   </div>
 
                   <div className="col-span-2 lg:col-span-1">
                     <Label>Teléfono</Label>
-                    <Input type="text" value="+569 1234 5678" />
+                    <Input type="text" value={user?.phone} />
                   </div>
                   
                 </div>

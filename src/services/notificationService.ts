@@ -1,5 +1,5 @@
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 import { AccessNotification } from "../types/notification";
+import { API_URL } from "../config";
 
 export const notificationService = {
   /**
@@ -68,7 +68,7 @@ export const notificationService = {
     }
   },
 
-    getAccessHistoryServerSide: async (start: number, length: number, search: string, draw: number, isResident: boolean): Promise<any> => {
+    getAccessHistoryServerSide: async (start: number, length: number, search: string, draw: number, isResident: boolean): Promise<unknown> => {
     try {
       // Si es residente va a /history/me, sino al endpoint general /history
       const urlBase = isResident ? `${API_URL}/history/me` : `${API_URL}/history`;

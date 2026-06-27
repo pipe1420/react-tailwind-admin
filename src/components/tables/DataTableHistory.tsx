@@ -13,6 +13,9 @@ import pdfFonts from 'pdfmake/build/vfs_fonts';
 import { notificationService } from '../../services/notificationService'; 
 import { AccessNotification } from '../../types/notification';
 
+// IMPORTA TU CONTEXTO DE AUTENTICACIÓN
+import { useAuth } from "../../context/AuthContext"; // Ajusta la ruta según tu estructura
+
 if (pdfFonts && pdfFonts.pdfMake) {
   (pdfmake as any).vfs = pdfFonts.pdfMake.vfs;
 } else if (pdfFonts) {
@@ -107,9 +110,17 @@ const columnas = [
 ];
 
 export default function DataTableHistory() {
-  const userRole = localStorage.getItem("user_role") || "";
-  const isResident = userRole === "residente";
+  // 1. OBTENER LOS DATOS DESDE EL CONTEXTO
+  // Modifica esto según la estructura exacta de tu AuthContext (ej. const { user } = useAuth();)
+  const { user } = useAuth(); 
+  
+  // 2. Extraer el Rol y determinar residencia (Asegurando fallbacks por si tarda en cargar la sesión)
+  const userRole = user?.role || ""; 
+  const isResident = userRole === "resident";
 
+  // Nota: Al usar 'serverSide: true', DataTables ejecuta la función 'ajax' cada vez que cambia una opción.
+  // Pero para asegurarnos de que la tabla reaccione si 'isResident' cambia asíncronamente (cuando carga el contexto),
+  // encapsulamos las opciones en un objeto, usando directamente las variables del render actual.
   const opcionesServerSide = {
     destroy: true,
     serverSide: true, 
@@ -123,12 +134,11 @@ export default function DataTableHistory() {
         const start = dataIdx.start;       
         const length = dataIdx.length;     
         const search = dataIdx.search?.value || "";
-        const draw = dataIdx.draw; // Capturamos el secuencial dinámico enviado por DataTables
+        const draw = dataIdx.draw; 
 
-        // Pasamos start, length, search, draw e isResident al servicio
+        // Pasamos el isResident reactivo obtenido del contexto
         const resultadoApi = await notificationService.getAccessHistoryServerSide(start, length, search, draw, isResident);
 
-        // Devolvemos el eco del draw exacto obtenido de la API
         callback({
           draw: resultadoApi.draw,
           recordsTotal: resultadoApi.recordsTotal,
@@ -149,7 +159,7 @@ export default function DataTableHistory() {
             extend: 'excelHtml5',
             text: 'Exportar Excel',
             className: 'dt-button',
-            filename: () => `Historial_Accesos_${new Date().toISOString().split('T')}`
+            filename: () => `Historial_Accesos_${new Date().toISOString().split('T')[0]}`
           },
           {
             extend: 'pdfHtml5',
@@ -176,6 +186,9 @@ export default function DataTableHistory() {
       paginate: { first: "Primero", last: "Último", next: "Siguiente", previous: "Anterior" }
     }
   };
+
+  // Si tu aplicación requiere esperar a que cargue el contexto de autenticación (loading), podrías agregar:
+  // if (!user) return <p>Cargando sesión...</p>;
 
   return (
     <div className="overflow-hidden bg-white dark:bg-white/[0.03] p-4 custom-datatable rounded-xl border border-gray-200 dark:border-white/[0.05]">

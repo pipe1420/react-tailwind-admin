@@ -5,6 +5,7 @@ import { EyeCloseIcon, EyeIcon } from "../../icons";
 import Label from "../form/Label";
 import Input from "../form/input/InputField";
 import Button from "../ui/button/Button";
+import { API_URL } from "../../config";
 
 export default function SignInForm() {
   const { refreshUser } = useAuth(); 
@@ -23,13 +24,12 @@ export default function SignInForm() {
     setError(null);
 
     try {
-      const url = "http://localhost:8000/login"; 
       
       const formData = new URLSearchParams();
       formData.append("username", email); 
       formData.append("password", password);
 
-      const response = await fetch(url, {
+      const response = await fetch(`${API_URL}/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded", 

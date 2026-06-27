@@ -1,6 +1,5 @@
 import { User } from '../types/user'; // Asegúrate de que esta interfaz refleje el tipado completo si es necesario
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+import { API_URL } from "../config";
 
 export const userService = {
   // 📡 Nueva función para obtener la sesión del usuario actual

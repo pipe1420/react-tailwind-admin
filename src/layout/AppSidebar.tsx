@@ -51,7 +51,7 @@ const ResidentItems: NavItem[] = [
     name: "Visitas", 
     code: "visits",
     icon: <PageIcon />,
-    path: "/access-visits",
+    path: "/visits",
     pro: false,
   },
   {
@@ -72,7 +72,9 @@ const ResidentItems: NavItem[] = [
     name: "Historial", 
     icon: <ListIcon />,
     path: "/history",
+    code: "history",
     pro: false,
+    new: true,
   },
   {
     name: "Usuarios", 
@@ -80,6 +82,7 @@ const ResidentItems: NavItem[] = [
     icon: <BoxCubeIcon/>,
     path: "/users",
     pro: false,
+    new: true,
   },
   {
     name: "Reportes", 
@@ -120,21 +123,37 @@ const AppSidebar: React.FC = () => {
   const { user } = useAuth();
   const location = useLocation();
 
-  // 1. Tu Set optimizado y tolerante a fallos
+  // 1. Tu Set optimizado adaptado al nuevo formato del backend (Mantenlo igual)
   const allowedMenus = useMemo(() => {
-    return new Set<string>(
-      (user?.permissions?.map((p: string | { name?: string }) =>
-        typeof p === "string" ? p : p?.name
-      ) || []).filter((name): name is string => typeof name === "string")
-    );
-  }, [user?.permissions]);
+    // 1. Buscamos en la raíz (array plano) o en el objeto estructurado
+    const rawPermissions = 
+      user?.permissions || 
+      user?.role_object?.permissions || 
+      user?.role?.permissions || 
+      [];
+    
+    // Imprime esto para verificar por cuál de las opciones entra y qué estructura tiene
+    console.log("Evaluando permisos en Sidebar:", rawPermissions);
 
-  // 2. Memorizamos los ítems filtrados para evitar renders e interrupciones en los efectos
+    return new Set<string>(
+      rawPermissions
+        .map((p: any) => {
+          if (typeof p === "string") return p; // Si ya es un array plano de códigos ("dashboard", "visits")
+          if (p && typeof p === "object" && !p.is_disabled) return p.code; // Si viene como objeto y NO está deshabilitado
+          return null;
+        })
+        .filter((code): code is string => typeof code === "string")
+    );
+  }, [user]);
+    
+  // 2. CORREGIDO: Eliminamos el "|| item.name === 'Historial'"
   const filteredResidentItems = useMemo(() => {
     return ResidentItems.filter(item => 
-      allowedMenus.has(item.name) || item.name === "Historial"
+      item.code && allowedMenus.has(item.code)
     );
   }, [allowedMenus]);
+
+  console.log(filteredResidentItems)
 
   // 3. Memorizamos los ítems de desarrollo
   const filteredDevItems = useMemo(() => {

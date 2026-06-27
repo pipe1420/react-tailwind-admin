@@ -1,28 +1,37 @@
 // src/types/user.ts
+import { Department } from "./condominium";
 
 export interface Permission {
+  code: string;
   name: string;
+  is_disabled: boolean;
 }
 
-export interface Role {
+// 1. Estructura real del objeto que viene del Backend
+export interface RoleObject {
   name: string;
-  description?: string;
+  description: string;
   permissions: Permission[];
 }
 
-export interface Department {
-  id?: number | null;
-  number: string;
-  purchase_date?: string;
-  condominium_id?: number;
-}
-
+// 2. Interfaz del Usuario Unificada (Mantiene compatibilidad y agrega lo nuevo)
 export interface User {
-  id: number; 
+  // Propiedades básicas
+  id: number;
   email: string;
   first_name: string;
   last_name: string;
   is_active: boolean;
-  role: Role; // Relación completa con el objeto de rol y sus permisos
+  phone?: string;
+  avatar?: string;
+  
+  // Retrocompatibilidad (Campos que usabas inicialmente para evitar que se rompa la UI)
+  name: string;             // Ej: "Juan Perez" (Concatenado en el Context)
+  role: string;             // Ej: "resident" (Para componentes viejos)
+  role_description: string; // Ej: "Residente" (Para UserMetaCard)
+  permissions: string[];    // Ej: ["dashboard", "visits"] (Arreglo plano de códigos)
+
+  // Estructuras extendidas (Para los nuevos componentes y lógica modular)
+  role_object?: RoleObject; // Objeto completo del backend por si necesitas usarlo después
   department: Department | null;
 }

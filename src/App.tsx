@@ -27,7 +27,7 @@ import Vehicles from "./pages/Vehicles/Vehicles";
 
 import Dashboard from "./pages/Dashboard/Dashboard";
 import Users from "./pages/Users/Users";
-import AccessVisits from "./pages/Access/AccessVisits";
+import Visits from "./pages/Access/Visits";
 import Residents from "./pages/Users/Residents";
 import Reports from "./pages/Reports/Reports";
 import Config from "./pages/Config/Config";
@@ -36,16 +36,34 @@ import Logs from "./pages/Developer/Logs";
 import Diagnostic from "./pages/Developer/Diagnostic";
 import { useAuth } from "./context/AuthContext";
 
-// 🛡️ GUARDIÁN DE RUTA: Bloquea el renderizado inmediatamente si no hay sesión
-const ProtectedRoute = () => {
-  const { user, loading } = useAuth(); // 👈 Consume el estado que ya descargó el AuthContext
+interface ProtectedRouteProps {
+  moduleCode?: string; // Código técnico opcional para módulos dinámicos
+}
+
+// 🛡️ GUARDIÁN DE RUTA AVANZADO: Bloquea sesión general y módulos deshabilitados
+const ProtectedRoute = ({ moduleCode }: ProtectedRouteProps) => {
+  const { user, loading } = useAuth();
 
   // Bloqueo estricto del parpadeo: no renderiza nada mientras el contexto inicializa
   if (loading) return null; 
 
-  // Si tras terminar la carga global no hay usuario válido, expulsa de inmediato
+  // 1. Si tras terminar la carga global no hay usuario válido, expulsa de inmediato
   if (!user) {
     return <Navigate to="/signin" replace />;
+  }
+
+  // 2. Si se especificó un módulo, verificamos si está deshabilitado en el backend
+  if (moduleCode) {
+    // Buscamos el objeto de permiso en la colección que armamos en el AuthContext
+    const permission = user.role_object?.permissions?.find(
+      (p: any) => p.code === moduleCode
+    );
+
+    // Si el permiso no existe, o explícitamente viene "is_disabled": true, se deniega el acceso
+    if (!permission || permission.is_disabled) {
+      console.warn(`[Acceso Denegado]: El módulo [${moduleCode}] se encuentra deshabilitado.`);
+      return <Navigate to="/" replace />; // Redirección limpia al Inicio
+    }
   }
 
   // Luz verde: renderiza las pantallas privadas de forma instantánea
@@ -58,24 +76,12 @@ export default function App() {
       <ScrollToTop />
       <Routes>
         
-        {/* Rutas Privadas Totalmente Protegidas por Backend y Frontend */}
+        {/* 1. Nivel Base: Rutas que solo requieren estar Autenticado */}
         <Route element={<ProtectedRoute />}>
-       
           <Route element={<AppLayout />}>
-           
+            
             <Route index path="/" element={<Dashboard />} />
-            <Route path="/access" element={<AccessControl />} />
-            <Route path="/vehicles" element={<Vehicles/>} />
             <Route path="/admin-profiles" element={<AdminProfiles />} />
-            <Route path="/history" element={<AccessHistory />} />
-            <Route path="/users" element={<Users />} />
-            <Route path="/access-visits" element={<AccessVisits />} />
-            <Route path="/residents" element={<Residents />} />
-            <Route path="/reports" element={<Reports />} />
-            <Route path="/config" element={<Config />} />
-            <Route path="/conections" element={<Conecctions />} />
-            <Route path="/diagnostic" element={<Diagnostic />} />
-            <Route path="/logs" element={<Logs />} />
             <Route path="/profile" element={<UserProfiles />} />
             <Route path="/calendar" element={<Calendar />} />
             <Route path="/blank" element={<Blank />} />
@@ -89,30 +95,70 @@ export default function App() {
             <Route path="/videos" element={<Videos />} />
             <Route path="/line-chart" element={<LineChart />} />
             <Route path="/bar-chart" element={<BarChart />} />
+
+            {/* 2. Nivel Módulos: Validaciones individuales contra el 'is_disabled' del Backend */}
+            <Route element={<ProtectedRoute moduleCode="access" />}>
+              <Route path="/access" element={<AccessControl />} />
+            </Route>
+
+            <Route element={<ProtectedRoute moduleCode="vehicles" />}>
+              <Route path="/vehicles" element={<Vehicles/>} />
+            </Route>
+
+            <Route element={<ProtectedRoute moduleCode="history" />}>
+              <Route path="/history" element={<AccessHistory />} />
+            </Route>
+
+            <Route element={<ProtectedRoute moduleCode="users" />}>
+              <Route path="/users" element={<Users />} />
+            </Route>
+
+            <Route element={<ProtectedRoute moduleCode="visits" />}>
+              <Route path="/visits" element={<Visits />} />
+            </Route>
+
+            <Route element={<ProtectedRoute moduleCode="residents" />}>
+              <Route path="/residents" element={<Residents />} />
+            </Route>
+
+            <Route element={<ProtectedRoute moduleCode="reports" />}>
+              <Route path="/reports" element={<Reports />} />
+            </Route>
+
+            <Route element={<ProtectedRoute moduleCode="settings" />}>
+              <Route path="/config" element={<Config />} />
+            </Route>
+
+            <Route element={<ProtectedRoute moduleCode="connections" />}>
+              <Route path="/conections" element={<Conecctions />} />
+            </Route>
+
+            <Route element={<ProtectedRoute moduleCode="diagnostics" />}>
+              <Route path="/diagnostic" element={<Diagnostic />} />
+            </Route>
+
+            <Route element={<ProtectedRoute moduleCode="logs" />}>
+              <Route path="/logs" element={<Logs />} />
+            </Route>
             
           </Route>
-           
         </Route>
-
-       
 
         {/* Rutas Públicas */}
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
         {/* Fallback Route */}
         <Route path="*" element={<NotFound />} />
-         
+          
       </Routes>
-        <Toaster 
-          position="top-center" 
-          containerStyle={{
-            top: 40, // Lo baja un poco para que no pegue al borde extremo de la pantalla
-            zIndex: 99999, // Lo mantiene al frente de todo el Dashboard
-          }} 
-          reverseOrder={false} 
-        />
+      <Toaster 
+        position="top-center" 
+        containerStyle={{
+          top: 40, 
+          zIndex: 99999, 
+        }} 
+        reverseOrder={false} 
+      />
     </Router>
-
-    
   );
 }
